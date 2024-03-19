@@ -1,12 +1,12 @@
 import { Carousel } from 'antd';
+import { useAuthContext } from 'context/AuthContext';
 
 
 export default function HeroSection() {
-
+    const { isAuthenticated, user } = useAuthContext();
     return (
         <>
             <div id='hero-section'>
-
                 <Carousel effect="fade" autoplay dotPosition='right'>
                     <div className='container'>
                         <div className="row">
@@ -28,7 +28,7 @@ export default function HeroSection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div className='container'>
                         <div className="row">
@@ -50,7 +50,7 @@ export default function HeroSection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div className='container'>
                         <div className="row">
@@ -72,7 +72,7 @@ export default function HeroSection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div className='container'>
                         <div className="row">
@@ -94,7 +94,7 @@ export default function HeroSection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                     <div className='container'>
                         <div className="row">
@@ -116,7 +116,7 @@ export default function HeroSection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                 </Carousel>
                 {/* 

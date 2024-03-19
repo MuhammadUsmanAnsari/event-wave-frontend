@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import './_navbar.scss'
 import { Link } from 'react-router-dom'
+import { useAuthContext } from 'context/AuthContext'
+import { Avatar, Button, Popover } from 'antd'
+import { UserOutlined } from '@ant-design/icons';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ProfileMenu from './ProfileMenu'
 
 export default function Index() {
     const [navBarScroll, setNavBarScroll] = useState(false)
     const [navbarCollapsed, setNavbarCollapsed] = useState(false)
     const [isCollapsedClick, setIsCollapsedClick] = useState(false)
     const [dropdownOpen, setDropdownOpen] = useState(false)
+    const { isAuthenticated, user } = useAuthContext();
+
 
     const expandButtonRef = useRef()
 
@@ -24,6 +31,8 @@ export default function Index() {
     }, [isCollapsedClick])
 
 
+    const text = <span>{user?.firstName}</span>;
+
     return (
         <>
             <nav className={`navbar navbar-expand-lg ${navBarScroll ? "navbar-background" : navbarCollapsed ? "navbar-background " : "bg-transparent"} ${navBarScroll ? "navbar-light navbar-fixed" : navbarCollapsed ? "navbar-light navbar-absolute" : "navbar-dark navbar-absolute"} `}>
@@ -38,7 +47,7 @@ export default function Index() {
                                 <Link className="nav-link active" aria-current="page" to="/">Home</Link>
                             </li>
                             <li className="nav-item mx-2">
-                                <a className="nav-link" href="#">About</a>
+                                <Link className="nav-link" to="/about">About</Link>
                             </li>
                             <li className="nav-item mx-2">
                                 <a className="nav-link" href="#">Upcoming</a>
@@ -64,7 +73,12 @@ export default function Index() {
                             </li>
                         </ul>
                         <div >
-                            <Link className='button-stylling-1 px-5' to="/auth/login">Login</Link>
+                            {isAuthenticated
+                                ? <Popover placement="bottomRight" title={text} content={<ProfileMenu />} >
+                                    <Avatar size="large" style={{ cursor: "pointer" }} icon={<UserOutlined />} />
+                                </Popover>
+                                : <Link className='button-stylling-1 px-5' to="/auth/login">Login</Link>
+                            }
                         </div>
                     </div>
                 </div>

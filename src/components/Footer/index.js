@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom'
 import LocationOnTwoToneIcon from '@mui/icons-material/LocationOnTwoTone';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import LocalPhoneTwoToneIcon from '@mui/icons-material/LocalPhoneTwoTone';
+import moment from 'moment';
 
 
 
 export default function index() {
-    const year = new Date().getFullYear()
+    const year = moment().year()
     return (
         <>
             <div className="bg-dark text-light" id='footer'>

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import HeroSection from './HeroSection'
 import './_home.scss'
 import Navbar from 'components/Navbar'
+import Footer from 'components/Footer'
 import Searchbar from './Searchbar'
 import PopularEvents from './PopularEvents'
 import HappyCustomers from './HappyCustomers'
@@ -9,13 +10,18 @@ import Speakers from './Speakers'
 import Testimonial from './Testimonial'
 import Blogs from 'components/blogs'
 import Newsletter from 'components/NewsLetter'
+import Services from './Services'
 
-export default function index() {
+export default function Index() {
+    useEffect(() => {
+        window.scroll(0, 0);
+    }, [])
     return (
         <>
             <Navbar />
             <HeroSection />
             <Searchbar />
+            <Services />
             <PopularEvents />
             <HappyCustomers />
             <Speakers />
@@ -30,6 +36,8 @@ export default function index() {
             </div>
             <Blogs />
             <Newsletter />
+            <Footer />
+
         </>
     )
 }

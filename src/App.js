@@ -11,16 +11,20 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import Routes from 'routes/Routes';
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import AuthContextProvider from 'context/AuthContext';
 
 
 function App() {
   return (
     <div className='app'>
       <BrowserRouter >
-        <ParallaxProvider>
-          <Routes />
-        </ParallaxProvider>
+        <AuthContextProvider>
+          <ParallaxProvider>
+            <Routes />
+          </ParallaxProvider>
+        </AuthContextProvider>
       </BrowserRouter>
+      {/* toast container */}
       <ToastContainer
         position="bottom-left"
         autoClose={5000}

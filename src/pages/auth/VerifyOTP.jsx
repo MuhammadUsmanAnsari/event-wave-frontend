@@ -1,52 +1,59 @@
 import LoadingIndicator from "components/LoadingIndicator";
-import { useAuthContext } from "context/AuthContext";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "services/auth";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { resendOTP, verifyOTP } from "services/auth";
 
-const initialState = { email: "", password: "" }
-export default function Login() {
-    const [state, setState] = useState(initialState);
+export default function VerifyOTP() {
+    const location = useLocation()
+    const userEmail = location.state?.email;
+    const [email, setEmail] = useState(userEmail);
+    const [otp, setOTP] = useState();
     const [loading, setLoading] = useState(false);
-    const { toggle, setToggle } = useAuthContext();
-    const [pathName, setPathName] = useState("/");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scroll(0, 0)
-        if (!window.location.pathname.includes("/auth/login")) {
-            setPathName(window.location.pathname)
-        }
     }, [])
-    const handleChange = e => {
-        setState(s => ({ ...s, [e.target.name]: e.target.value }));
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        let body = {
+            email,
+            otp
+        }
         setLoading(true)
         try {
-            let data = await loginUser(state);
+            let data = await verifyOTP(body);
             let msg = data.data.msg;
-            let jwtoken = data.data.jwtoken;
-            let userData = data.data.data;
-            localStorage.setItem("jwtoken", jwtoken);
-            localStorage.setItem("user", JSON.stringify(userData));
             window.toastify(msg, "success");
-            navigate(pathName);
+            navigate("/auth/login");
         } catch (error) {
             let msg = "Some error occured";
             let { status, data } = error.response;
-            if (status == 400 || status == 401 || status == 500 || status == 403) {
+            if (status == 400 || status == 401 || status == 500 || status == 404) {
                 msg = data.message;
                 window.toastify(msg, "error");
-                if (status == 403) {
-                    navigate("/auth/verifyOTP", { state: { email: state.email } });
-                }
             }
         } finally {
             setLoading(false)
-            setToggle(!toggle)
+        }
+    }
+
+    const handleResend = async () => {
+        setLoading(true)
+        try {
+            let data = await resendOTP({ email });
+            let msg = data.data.msg;
+            window.toastify(msg, "success");
+        } catch (error) {
+            let msg = "Some error occured";
+            let { status, data } = error.response;
+            if (status == 400 || status == 401 || status == 500 || status == 404) {
+                msg = data.message;
+                window.toastify(msg, "error");
+            }
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -60,26 +67,25 @@ export default function Login() {
                             <div className="card shadow-lg rounded-5 border-0 mt-3 mb-4">
                                 <div className="row row-cols-1 row-cols-md-2  g-0">
                                     <div className="col p-3 p-md-4 p-lg-5 my-4">
-                                        <h3 className='text-warning text-center mb-5'>Login</h3>
+                                        <h3 className='text-center text-warning mb-5'>Verify Your Email</h3>
                                         <form className="px-0 px-lg-4" onSubmit={handleSubmit}>
                                             <div class="form-floating mb-3">
-                                                <input type="email" class="form-control shadow-none" id="floatingInput" required name="email" onChange={handleChange} placeholder="name@example.com" />
+                                                <input type="email" class="form-control shadow-none" id="floatingInput" value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" />
                                                 <label htmlFor="floatingInput" className="text-secondary">Email address</label>
                                             </div>
                                             <div class="form-floating mb-3">
-                                                <input type="password" class="form-control shadow-none" id="floatingInput1" required name="password" onChange={handleChange} placeholder="Enter Password" />
-                                                <label htmlFor="floatingInput1" className="text-secondary">Password</label>
+                                                <input type="number" class="form-control shadow-none" required maxLength={4} id="floatingInput1" onChange={e => setOTP(e.target.value)} placeholder="Enter OTP" />
+                                                <label htmlFor="floatingInput1" className="text-secondary">Enter OTP</label>
                                             </div>
                                             <div className="d-flex justify-content-end">
-                                                <Link className="text-decoration-none" to="/auth/forgot-password">Forgot Password?</Link>
+                                                <button className="btn btn-link text-decoration-none" type="button" onClick={handleResend}>Resend OTP</button>
                                             </div>
                                             <div className="my-5">
                                                 <button class="button-stylling w-100 py-3 rounded bg-info border-0" type="submit" role="button">
-                                                    <span class="text">Log in</span>
-                                                    <span>Log in</span>
+                                                    <span class="text">Verify</span>
+                                                    <span>Verify</span>
                                                 </button>
                                             </div>
-                                            <p className="text-center text-secondary">Don't have an account? <Link to="/auth/register" className="text-decoration-none">Register</Link></p>
                                         </form>
                                     </div>
                                     <div className="col text-light d-none d-md-block">

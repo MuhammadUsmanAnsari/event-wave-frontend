@@ -52,3 +52,20 @@ $warning: #f5a998;
     backdrop-filter: blur(15px) !important;
 
 }
+
+
+// profileMenu-section
+#profileMenu-section {
+    button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        
+        span {
+            display: flex;
+            &:nth-child(1) {
+                padding-right: 10px;
+            }
+        }
+    }
+}
