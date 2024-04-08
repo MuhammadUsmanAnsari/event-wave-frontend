@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import seats from 'assets/pictures/seats.png';
+import test from 'assets/pictures/test.png';
 
 
 export default function PopularEvents() {
@@ -46,7 +47,7 @@ export default function PopularEvents() {
                             disableOnInteraction: false,
                         }}
                         className="mySwiper">
-                        {categories.map((item, i) => {
+                        {window?.categories?.map((item, i) => {
                             return <SwiperSlide key={i}>{item}</SwiperSlide>
                         })}
                     </Swiper>
@@ -56,7 +57,7 @@ export default function PopularEvents() {
                 <div className="col">
                     <div class="card border-0 shadow rounded-4 overflow-hidden">
                         <div className="card-img">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="..." />
+                            <img src={test} class="card-img-top" alt="..." />
                             <div className="seats bg-info py-2 px-4 d-flex align-items-center">
                                 <img src={seats} style={{ width: 30, marginRight: 10 }} alt="" />
                                 <span>500 Seat</span>
@@ -89,7 +90,7 @@ export default function PopularEvents() {
                 <div className="col">
                     <div class="card border-0 shadow rounded-4 overflow-hidden">
                         <div className="card-img">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="..." />
+                            <img src={test} class="card-img-top" alt="..." />
                             <div className="seats bg-info py-2 px-4 d-flex align-items-center">
                                 <img src={seats} style={{ width: 30, marginRight: 10 }} alt="" />
                                 <span>500 Seat</span>
@@ -122,7 +123,7 @@ export default function PopularEvents() {
                 <div className="col">
                     <div class="card border-0 shadow rounded-4 overflow-hidden">
                         <div className="card-img">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="..." />
+                            <img src={test} class="card-img-top" alt="..." />
                             <div className="seats bg-info py-2 px-4 d-flex align-items-center">
                                 <img src={seats} style={{ width: 30, marginRight: 10 }} alt="" />
                                 <span>500 Seat</span>
@@ -155,7 +156,7 @@ export default function PopularEvents() {
                 <div className="col">
                     <div class="card border-0 shadow rounded-4 overflow-hidden">
                         <div className="card-img">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="..." />
+                            <img src={test} class="card-img-top" alt="..." />
                             <div className="seats bg-info py-2 px-4 d-flex align-items-center">
                                 <img src={seats} style={{ width: 30, marginRight: 10 }} alt="" />
                                 <span>500 Seat</span>
@@ -221,7 +222,7 @@ export default function PopularEvents() {
                 <div className="col">
                     <div class="card border-0 shadow rounded-4 overflow-hidden">
                         <div className="card-img">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="card-img-top" alt="..." />
+                            <img src={test} class="card-img-top" alt="..." />
                             <div className="seats bg-info py-2 px-4 d-flex align-items-center">
                                 <img src={seats} style={{ width: 30, marginRight: 10 }} alt="" />
                                 <span>500 Seat</span>

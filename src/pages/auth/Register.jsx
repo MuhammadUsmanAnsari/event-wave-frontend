@@ -112,14 +112,14 @@ export default function Register() {
                                             <div className="row row-cols-1 row-cols-sm-2 mb-3 h-auto">
                                                 <div className="col">
                                                     <div class="form-floating ">
-                                                        <input type="text" name="firstName" class="form-control shadow-none" id="fname" placeholder="Enter your first name" onChange={handleChange} />
+                                                        <input type="text" name="firstName" class="form-control shadow-none" required id="fname" placeholder="Enter your first name" onChange={handleChange} />
                                                         <label htmlFor="fname" className="text-secondary">First Name</label>
                                                     </div>
                                                 </div>
                                                 <div className="col mt-3 mt-sm-0">
                                                     <div className="col">
                                                         <div class="form-floating ">
-                                                            <input type="text" name="lastName" class="form-control shadow-none" id="lname" placeholder="Enter your last name" onChange={handleChange} />
+                                                            <input type="text" name="lastName" class="form-control shadow-none" required id="lname" placeholder="Enter your last name" onChange={handleChange} />
                                                             <label htmlFor="lname" className="text-secondary">Last Name</label>
                                                         </div>
                                                     </div>
@@ -131,15 +131,15 @@ export default function Register() {
                                             </div>}
 
                                             <div class="form-floating mb-3">
-                                                <input type="email" name="email" class="form-control shadow-none" id="floatingInput" placeholder="name@example.com" onChange={handleChange} />
+                                                <input type="email" name="email" class="form-control shadow-none" id="floatingInput" required placeholder="name@example.com" onChange={handleChange} />
                                                 <label htmlFor="floatingInput" className="text-secondary">Email Address</label>
                                             </div>
                                             <div class="form-floating mb-3">
-                                                <input type="password" name="password" class="form-control shadow-none" id="floatingInput1" placeholder="Enter Password" onChange={handleChange} />
+                                                <input type="password" name="password" class="form-control shadow-none" id="floatingInput1" required placeholder="Enter Password" onChange={handleChange} />
                                                 <label htmlFor="floatingInput1" className="text-secondary">Password</label>
                                             </div>
                                             <div class="form-floating mb-3">
-                                                <input type="password" name="confirmPassword" class="form-control shadow-none" id="floatingInput2" placeholder="Enter Password" onChange={handleChange} />
+                                                <input type="password" name="confirmPassword" class="form-control shadow-none" id="floatingInput2" required placeholder="Enter Password" onChange={handleChange} />
                                                 <label htmlFor="floatingInput2" className="text-secondary">Confirm Password</label>
                                             </div>
                                             <div className="mb-5">

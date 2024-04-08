@@ -20,3 +20,18 @@ export const forgotPassword = (email) => {
 export const resetPassword = (token, body) => {
     return put(`${root}/api/v1/auth/resetPassword?token=${token}`, body);
 };
+
+
+// user
+export const getUser = () => {
+    return get(`${root}/api/v1/auth/getUser`);
+};
+export const updateUser = (id, body) => {
+    return put(`${root}/api/v1/auth/updateUser?id=${id}`, body);
+};
+export const updateUserPassword = (id, oldPassword, password) => {
+    return put(`${root}/api/v1/auth/updateUserPassword?id=${id}&oldPassword=${oldPassword}&password=${password}`);
+};
+export const uploadImage = (body) => {
+    return post(`${root}/api/v1/auth/uploadImage`, body);
+};
