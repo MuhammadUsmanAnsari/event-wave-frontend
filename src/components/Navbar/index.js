@@ -30,7 +30,6 @@ export default function Index() {
         setNavbarCollapsed(JSON.parse(collapsed));
     }, [isCollapsedClick])
 
-
     const text = <span>{user?.firstName}</span>;
 
     return (
@@ -75,7 +74,12 @@ export default function Index() {
                         <div >
                             {isAuthenticated
                                 ? <Popover placement="bottomRight" title={text} content={<ProfileMenu />} >
-                                    <Avatar size="large" style={{ cursor: "pointer" }} icon={<UserOutlined />} />
+                                    <Avatar
+                                        size="large"
+                                        style={{ cursor: "pointer" }}
+                                        src={process.env.REACT_APP_EVENT_WAVE_ROOT_URL + user?.image}
+                                        icon={<UserOutlined />} />
+
                                 </Popover>
                                 : <Link className='button-stylling-1 px-5' to="/auth/login">Login</Link>
                             }

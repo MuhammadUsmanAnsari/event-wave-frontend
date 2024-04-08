@@ -33,7 +33,9 @@ export default function Login() {
             localStorage.setItem("jwtoken", jwtoken);
             localStorage.setItem("user", JSON.stringify(userData));
             window.toastify(msg, "success");
-            navigate(pathName);
+            // navigate(pathName);
+            window.location.href = pathName; // Change '/new-route' to your desired route
+
         } catch (error) {
             let msg = "Some error occured";
             let { status, data } = error.response;

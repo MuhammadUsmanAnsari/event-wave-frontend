@@ -3,9 +3,10 @@ import { useAuthContext } from 'context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
+import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 
 export default function ProfileMenu() {
-    const { dispatch } = useAuthContext();
+    const { dispatch, user } = useAuthContext();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -17,10 +18,15 @@ export default function ProfileMenu() {
     return (
         <div id='profileMenu-section'>
             <hr />
-            <button className='btn btn-light' onClick={() => navigate("/profile")}>
+            <button className='btn btn-light' onClick={() => navigate("/dashboard/profile")}>
                 <span><PermIdentityOutlinedIcon fontSize='small' /></span>
                 <span>Profile</span>
             </button>
+            {user?.role === "organizer" && <button className='btn btn-light' onClick={() => navigate("/dashboard")}>
+                <span><CelebrationOutlinedIcon fontSize='small' /></span>
+                <span>Events</span>
+            </button>}
+
             <button className='btn btn-light' onClick={() => navigate("/dashboard")}>
                 <span><SpaceDashboardOutlinedIcon fontSize='small' /></span>
                 <span>Dashboard</span>
