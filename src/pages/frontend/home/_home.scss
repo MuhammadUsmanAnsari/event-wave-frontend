@@ -8,7 +8,7 @@ $warning: #f5a998;
             .slick-list {
                 .slick-track {
                     .slick-slide {
-                        height: 111vh;
+                        height: 111svh;
                         background-size: cover;
                         background-position: center;
                         background-repeat: no-repeat;
@@ -669,6 +669,10 @@ $warning: #f5a998;
                                                 button {
                                                     width: 100%;
                                                 }
+
+                                                a {
+                                                    width: 100%;
+                                                }
                                             }
                                         }
                                     }
@@ -750,15 +754,15 @@ $warning: #f5a998;
                     .row {
                         .col-sm-3 {
                             width: 100%;
-                            
+
                             img {
                                 width: 25% !important;
                                 margin-bottom: 20px;
                             }
-                            
+
                         }
                     }
-                    
+
                     &:hover {
                         .row {
                             .col-sm-3 {
