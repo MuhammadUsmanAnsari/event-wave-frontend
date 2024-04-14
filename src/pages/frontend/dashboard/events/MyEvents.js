@@ -1,17 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { delEvent, getMyEvents } from 'services/event';
-import { Popconfirm, Spin } from 'antd';
+import { delEvent, getMyEvents, updateEvent } from 'services/event';
+import { Popconfirm, Spin, Switch } from 'antd';
 import { Button, Input, Space, Table } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { useNavigate } from 'react-router-dom';
+import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import ViewEvent from './ViewEvent';
 
 export default function MyEvents() {
     const [events, setEvents] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [statusLoading, setStatusLoading] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+    const [modalEventId, setModalEventId] = useState("");
     const searchInput = useRef(null);
     const navigate = useNavigate();
 
@@ -183,13 +188,25 @@ export default function MyEvents() {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            ...getColumnSearchProps('status'),
         },
         {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className='d-flex'>
-                    <Space size="middle">
+                <div className='d-flex justify-content-evenly align-items-center'>
+                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
+                    <Button type='dashed' onClick={() => {
+                        setOpenModal(true)
+                        setModalEventId(record?._id)
+                    }}
+                        className='ms-1 d-flex align-items-center justify-content-center'>
+                        <VisibilityTwoToneIcon fontSize='small' />
+                    </Button>
+                    <Button type='default' disabled={record.status === "Closed" ? true : false} onClick={() => navigate(`/dashboard/events/edit/${record?._id}`)} className='ms-1 d-flex align-items-center justify-content-center'>
+                        <EditTwoToneIcon fontSize='small' />
+                    </Button>
+                    <Space size="middle" className='ms-1'>
                         <Popconfirm
                             title="Delete the event"
                             description="Are you sure to delete this event?"
@@ -210,9 +227,6 @@ export default function MyEvents() {
                             </Button>
                         </Popconfirm>
                     </Space>
-                    <Button type='default' onClick={() => navigate(`/dashboard/events/edit/${record?._id}`)} className='ms-2 d-flex align-items-center justify-content-center'>
-                        <EditTwoToneIcon fontSize='small' />
-                    </Button>
                 </div>
 
             ),
@@ -222,10 +236,39 @@ export default function MyEvents() {
     ];
 
 
+    const handleStatus = async (record) => {
+        let status;
+        if (record?.status === "Published") {
+            status = "Draft"
+        } else if (record?.status === "Draft") {
+            status = "Published"
+        }
+
+        if (status === undefined) {
+            return window.toastify("Event is closed already. You can't change status", "error")
+        }
+
+        setStatusLoading(true)
+        try {
+            let { data } = await updateEvent(record?._id, { status });
+            window.toastify(data?.msg, "success");
+        } catch (error) {
+            console.log(error);
+            let msg = "Some error occured";
+            let { status, data } = error.response;
+            if (status == 400 || status == 401 || status == 500 || status == 413) {
+                msg = data.message || data.msg;
+                window.toastify(msg, "error");
+            }
+        } finally {
+            getEvents()
+            setStatusLoading(false)
+        }
+    }
+
     const handleDelEvent = async (id) => {
         try {
             let { data } = await delEvent(id);
-            console.log(data);
             window.toastify(data?.msg, "success");
         } catch (error) {
             console.log(error);
@@ -244,8 +287,13 @@ export default function MyEvents() {
         <div className="container">
             <h2 className='heading-stylling mb-5 pt-4'>MY EVENTS</h2>
             <div className="row">
-                <div className="col">
+                <div className="col" style={{ overflow: "auto" }}>
                     <Table columns={columns} dataSource={events} />
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    {openModal && <ViewEvent open={openModal} setOpen={setOpenModal} id={modalEventId} />}
                 </div>
             </div>
         </div>

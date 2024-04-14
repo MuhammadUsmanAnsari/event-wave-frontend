@@ -9,11 +9,8 @@ import test from 'assets/pictures/test.png';
 
 
 export default function PopularEvents() {
-    const [selectedTab, setSelectedTab] = useState()
-
-    const categories = [
-        "Business", "Concerts", "Sports", "Parties", "Wedding", "Birthday", "Seminar", "Festivals", "Travel"
-    ]
+    const [selectedTab, setSelectedTab] = useState("Business")
+    console.log(selectedTab);
 
 
     return (
@@ -43,12 +40,12 @@ export default function PopularEvents() {
                             },
                         }}
                         autoplay={{
-                            delay: 3000,
+                            delay: 10000,
                             disableOnInteraction: false,
                         }}
                         className="mySwiper">
                         {window?.categories?.map((item, i) => {
-                            return <SwiperSlide key={i}>{item}</SwiperSlide>
+                            return <SwiperSlide key={i}><button className={`btn btn-link text-decoration-none ${selectedTab === item ? "text-warning" : "text-dark"}  fw-bold`} onClick={() => setSelectedTab(item)}>{item}</button></SwiperSlide>
                         })}
                     </Swiper>
                 </div>

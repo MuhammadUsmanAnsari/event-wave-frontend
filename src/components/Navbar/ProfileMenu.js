@@ -24,7 +24,7 @@ export default function ProfileMenu() {
             </button>
             {user?.role === "organizer" && <button className='btn btn-light' onClick={() => navigate("/dashboard/events/myEvents")}>
                 <span><CelebrationOutlinedIcon fontSize='small' /></span>
-                <span>Events</span>
+                <span>My Events</span>
             </button>}
 
             <button className='btn btn-light' onClick={() => navigate("/dashboard")}>

@@ -3,7 +3,7 @@ import './_events.scss';
 import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker, InputNumber } from 'antd'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { addEvent, uploadImage, getEditEvent } from 'services/event';
+import { addEvent, uploadImage, getEditEvent, updateEvent } from 'services/event';
 import LoadingIndicator from 'components/LoadingIndicator';
 import ReactQuill from 'react-quill';
 import { useParams } from 'react-router-dom';
@@ -36,6 +36,7 @@ export default function EditEvent() {
         try {
             let { data } = await getEditEvent(id);
             setEvent(data?.data);
+            setDescription(data?.data?.description);
             setImage(process.env.REACT_APP_EVENT_WAVE_ROOT_URL + data?.data?.image);
         } catch (error) {
             console.log(error);
@@ -71,7 +72,7 @@ export default function EditEvent() {
                                 setImage(e.target.result)
                                 onSuccess(e.target.result)
                             } else {
-                                setImage("")
+                                // setImage("")
                                 return window.toastify(`Image dimenstions should be ${max_image_width}x${max_image_height} px. Your image resolution is ${width}x${height} px`, "error")
                             }
 
@@ -106,22 +107,25 @@ export default function EditEvent() {
         const formattedDate = moment(values?.date?.$d).format('YYYY-MM-DD');
         const formattedDated = values.time.map(item => moment(item.$d).format('HH:mm'));
         const ticketPrice = Math.floor(Number(values?.ticketPrice) * (1 + taxRate));
-
+        const formattedSchedule = values?.schedule?.map(item => (
+            {
+                time: moment(item?.time.$d).format('HH:mm'),
+                details: item.details
+            }
+        ))
         let body = {
             ...values, date: formattedDate, time: formattedDated, description,
-            ticketPrice,
+            ticketPrice, schedule: formattedSchedule
         };
         setLoading(true)
         try {
-            let { data } = await addEvent(body);
+            let { data } = await updateEvent(id, body);
 
-            if (data) {
-                await uploadImage({ id: data?.event?._id, image });
-                eventFormRef.current.resetFields()
-                setDescription("")
+            if (data && !image.includes(process.env.REACT_APP_EVENT_WAVE_ROOT_URL)) {
+                await uploadImage({ id, image });
                 setImage("")
-                window.toastify(data.msg, "success");
             }
+            window.toastify(data.msg, "success");
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
@@ -132,6 +136,7 @@ export default function EditEvent() {
             }
         } finally {
             setLoading(false)
+            getEvent()
         }
 
 
@@ -145,11 +150,12 @@ export default function EditEvent() {
     };
 
     const formatInitialValues = (eventData) => {
-        console.log(eventData?.schedule);
+        const startTime = eventData?.time && eventData.time[0] ? dayjs(eventData.time[0], 'HH:mm') : null;
+        const endTime = eventData?.time && eventData.time[1] ? dayjs(eventData.time[1], 'HH:mm') : null;
         if (eventData) {
             return {
                 schedule: eventData?.schedule?.map((item) => ({
-                    time: moment(item?.time, 'HH:mm'), // Convert time to moment object
+                    time: dayjs(item?.time, 'HH:mm'), // Convert time to moment object
                     details: item.details, // Set details as provided
                 })),
                 speakers: eventData?.speakers?.map((item) => ({
@@ -159,23 +165,28 @@ export default function EditEvent() {
                 // ...eventData,
                 // arrival_time: stop.arrival_time ? moment(stop.arrival_time).format('HH:mm') : null,
                 // departure_time: stop.departure_time ? moment(stop.departure_time).format('HH:mm') : null,
-                // title: eventData.title,
-                // category: eventData.category,
-                // country: eventData.country,
-                // city: eventData.city,
-                // location: eventData.location,
+                title: eventData?.title,
+                date: moment(eventData?.date),
+                category: eventData?.category,
+                country: eventData?.country,
+                city: eventData?.city,
+                location: eventData?.location,
+                organizerInfo: eventData?.organizerInfo,
+                eventRules: eventData?.eventRules,
+                ticketPrice: eventData?.ticketPrice,
+                seats: eventData?.seats,
+                tags: eventData?.tags,
+                time: [startTime, endTime],
             };
         }
         return eventData;
     };
-    const startTime = event?.time && event.time[0] ? dayjs(event.time[0], 'HH:mm') : null;
-    const endTime = event?.time && event.time[1] ? dayjs(event.time[1], 'HH:mm') : null;
+
     const initialFormValues = formatInitialValues(event);
 
     return (
         <>
             <LoadingIndicator loading={loading} />
-
             <div className='container px-2 px-sm-4 py-5' id='add-events'>
                 <div className="card border-0 shadow-lg py-5 px-4">
                     <h2 className='heading-stylling mb-5'>Edit Event</h2>
@@ -219,7 +230,7 @@ export default function EditEvent() {
                                 </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-                                        <Input placeholder="Enter Event Title" defaultValue={event?.title ? event?.title : null} name='title' id='title' size='large' />
+                                        <Input placeholder="Enter Event Title" name='title' id='title' size='large' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">
@@ -228,7 +239,6 @@ export default function EditEvent() {
                                             showSearch
                                             size='large'
                                             id='category'
-                                            defaultValue={event?.category ? event?.category : null}
                                             // value={country}
                                             // onChange={e => setCountry(e)}
                                             style={{ width: "100%" }}
@@ -251,7 +261,6 @@ export default function EditEvent() {
                                             showSearch
                                             size='large'
                                             id='country'
-                                            defaultValue={event?.country ? event?.country : null}
                                             // value={country}
                                             // onChange={e => setCountry(e)}
                                             style={{ width: "100%" }}
@@ -269,36 +278,35 @@ export default function EditEvent() {
                                 </div>
                                 <div className="col-12 col-md-4">
                                     <Form.Item label="City" name="city" rules={[{ required: true }]}>
-                                        <Input placeholder="Enter City" defaultValue={event?.city ? event?.city : null} id='city' size='large' />
+                                        <Input placeholder="Enter City" id='city' size='large' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-4">
                                     <Form.Item label="Location of Event" name="location" rules={[{ required: true }]}>
-                                        <Input placeholder="Enter Full Address" defaultValue={event?.location ? event?.location : null} id='location' size='large' />
+                                        <Input placeholder="Enter Full Address" id='location' size='large' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Select Date" name="date" rules={[{ required: true }]}>
-                                        <DatePicker className='w-100' defaultValue={event?.date ? moment(event?.date) : null}
-                                            placeholder='Select Date' size='large' disabledDate={(current) => {
-                                                // Disable past dates
-                                                return current && current < moment().startOf("day");
-                                            }} format='YYYY-MM-DD' id='date' />
+                                        <DatePicker className='w-100' placeholder='Select Date' size='large' disabledDate={(current) => {
+                                            // Disable past dates
+                                            return current && current < moment().startOf("day");
+                                        }} format='YYYY-MM-DD' id='date' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Time" name="time" rules={[{ required: true }]}>
-                                        <TimePicker.RangePicker defaultValue={[startTime, endTime]} className='w-100' id="time" size='large' format={'HH:mm'} />
+                                        <TimePicker.RangePicker className='w-100' id="time" size='large' format={'HH:mm'} />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Organizer information" name="organizerInfo" >
-                                        <Input placeholder="Enter organizer information" defaultValue={event?.organizerInfo ? event?.organizerInfo : null} id='location' size='large' />
+                                        <Input placeholder="Enter organizer information" id='location' size='large' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Event Rules and Policies" name="eventRules" >
-                                        <Input placeholder="Enter Rules and Policies" defaultValue={event?.eventRules ? event?.eventRules : null} id='rules' size='large' />
+                                        <Input placeholder="Enter Rules and Policies" id='rules' size='large' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">
@@ -424,7 +432,7 @@ export default function EditEvent() {
                                             message: 'Ticket price required',
                                         },
                                     ]}>
-                                        <InputNumber className='w-100' size='large' min={1} defaultValue={event?.ticketPrice ? event?.ticketPrice : null} placeholder='Enter Ticket Price (Rs.)' />
+                                        <InputNumber className='w-100' size='large' min={1} placeholder='Enter Ticket Price (Rs.)' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-4">
@@ -434,13 +442,13 @@ export default function EditEvent() {
                                             message: 'Seats required',
                                         },
                                     ]}>
-                                        <InputNumber min={1} className='w-100' size='large' defaultValue={event?.seats ? event?.seats : null} placeholder='Enter Total Seats' />
+                                        <InputNumber min={1} className='w-100' size='large' placeholder='Enter Total Seats' />
                                     </Form.Item>
 
                                 </div>
                                 <div className="col-12 col-md-4">
                                     <Form.Item label="Event Relevent Tags" name="tags" >
-                                        <Input className='w-100' size='large' defaultValue={event?.tags ? event?.tags : null} placeholder='E.g. wedding, seminar' />
+                                        <Input className='w-100' size='large' placeholder='E.g. wedding, seminar' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12">
@@ -449,7 +457,7 @@ export default function EditEvent() {
                                         id='description'
                                         theme="snow"
                                         placeholder='Say something about event...'
-                                        defaultValue={event?.description ? event?.description : description}
+                                        value={description}
                                         onChange={handleChange}
                                     />
                                     {/* <Form.Item label="Event Description" name="description" >

@@ -17,3 +17,6 @@ export const delEvent = (id) => {
 export const getEditEvent = (id) => {
     return get(`${root}/api/v1/event?id=${id}`);
 };
+export const updateEvent = (id, body) => {
+    return put(`${root}/api/v1/event?id=${id}`, body);
+};

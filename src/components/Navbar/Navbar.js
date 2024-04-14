@@ -55,9 +55,9 @@ export default function Navbar() {
                                     Categories
                                 </a>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="#">Action</a></li>
-                                    <li><a className="dropdown-item" href="#">Another action</a></li>
-                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                    {window?.categories?.map((item, i) => {
+                                        return <li key={i}><a className="dropdown-item" href="#">{item}</a></li>
+                                    })}
                                 </ul>
                             </li>
                             <li className="nav-item mx-2">
