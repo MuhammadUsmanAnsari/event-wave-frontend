@@ -12,7 +12,6 @@ export default function HeroSection() {
                     <div className='container'>
                         <div className="row">
                             <div className="col">
-                                <div>{process.env.REACT_APP_EVENT_WAVE_ROOT_URL}</div>
                                 <h1>Worldwide Music Concert</h1>
                                 <h4>Explore, Book, Enjoy - Your Event Journey Begins Here</h4>
                                 <div className="row row-cols-1 row-cols-sm-2">
