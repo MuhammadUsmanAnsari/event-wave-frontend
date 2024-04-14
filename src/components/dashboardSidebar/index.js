@@ -5,6 +5,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import './_dashboardSidebar.scss';
 import { useAuthContext } from 'context/AuthContext';
 
@@ -36,8 +37,9 @@ export default function Index({ collapsed }) {
                     key: "/dashboard/events/add"
                 },
                 {
-                    label: "Past Events",
-                    key: "/dashboard/events/past"
+                    icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+                    label: "My Events",
+                    key: "/dashboard/events/myEvents"
                 }
             ]
         },

@@ -3,6 +3,7 @@ import { Input, Select } from 'antd'
 import { useAuthContext } from 'context/AuthContext';
 import LoadingIndicator from 'components/LoadingIndicator';
 import { updateUser } from 'services/auth';
+import ReactQuill from 'react-quill';
 
 export default function PersonalDetails() {
   const { TextArea } = Input;
@@ -16,7 +17,11 @@ export default function PersonalDetails() {
   const [city, setCity] = useState(user?.city ? user?.city : "")
   const [description, setDescription] = useState(user?.description ? user?.description : "")
   const [loading, setLoading] = useState(false)
+  // const [setDescription, setDescription] = useState('');
 
+  const handleChange = (html) => {
+    setDescription(html);
+  };
 
   const filterOption = (input, option) =>
     (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -108,7 +113,7 @@ export default function PersonalDetails() {
 
             <div className="col-12 ">
               <label htmlFor="description" className='mb-2'>Description</label>
-              <TextArea
+              {/* <TextArea
                 showCount
                 id='description'
                 value={description}
@@ -119,6 +124,12 @@ export default function PersonalDetails() {
                 style={{
                   minHeight: 140
                 }}
+              /> */}
+
+              <ReactQuill
+                theme="snow" // Specify Quill theme
+                value={description}
+                onChange={handleChange}
               />
             </div>
             <div className="col-12 mt-5">
