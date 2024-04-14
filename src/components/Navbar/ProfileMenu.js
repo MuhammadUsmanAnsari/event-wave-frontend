@@ -22,7 +22,7 @@ export default function ProfileMenu() {
                 <span><PermIdentityOutlinedIcon fontSize='small' /></span>
                 <span>Profile</span>
             </button>
-            {user?.role === "organizer" && <button className='btn btn-light' onClick={() => navigate("/dashboard")}>
+            {user?.role === "organizer" && <button className='btn btn-light' onClick={() => navigate("/dashboard/events/myEvents")}>
                 <span><CelebrationOutlinedIcon fontSize='small' /></span>
                 <span>Events</span>
             </button>}

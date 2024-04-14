@@ -37,7 +37,7 @@ export default function Services() {
                             </div>
                             <div className="col">
                                 <h4>Free registrations management</h4>
-                                <p>Effortlessly manage registrations on our platform, enabling organizers to securely gather attendee details with ease and at zero expense.</p>
+                                <p>Effortlessly manage registrations on our platform, enabling organizers to securely gather attendee details with ease.</p>
                             </div>
                         </div>
                     </div>

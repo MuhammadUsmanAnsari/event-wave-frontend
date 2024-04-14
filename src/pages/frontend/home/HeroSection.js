@@ -1,5 +1,6 @@
 import { Carousel } from 'antd';
 import { useAuthContext } from 'context/AuthContext';
+import { Link } from 'react-router-dom';
 
 
 export default function HeroSection() {
@@ -15,10 +16,10 @@ export default function HeroSection() {
                                 <h4>Explore, Book, Enjoy - Your Event Journey Begins Here</h4>
                                 <div className="row row-cols-1 row-cols-sm-2">
                                     <div className="col text-center text-sm-end">
-                                        <button class="button-stylling px-5 py-3 rounded bg-info border-0" role="button">
+                                        <Link class="button-stylling px-5 py-3 rounded bg-info border-0" role="button" to={'/about'} >
                                             <span class="text">About Us</span>
                                             <span>Learn More</span>
-                                        </button>
+                                        </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
                                         <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
@@ -37,10 +38,10 @@ export default function HeroSection() {
                                 <h4>Explore, Book, Enjoy - Your Event Journey Begins Here</h4>
                                 <div className="row row-cols-1 row-cols-sm-2">
                                     <div className="col text-center text-sm-end">
-                                        <button class="button-stylling px-5 py-3 rounded bg-info border-0" role="button">
+                                        <Link class="button-stylling px-5 py-3 rounded bg-info border-0" role="button" to={'/about'} >
                                             <span class="text">About Us</span>
                                             <span>Learn More</span>
-                                        </button>
+                                        </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
                                         <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
@@ -59,10 +60,10 @@ export default function HeroSection() {
                                 <h4>Explore, Book, Enjoy - Your Event Journey Begins Here</h4>
                                 <div className="row row-cols-1 row-cols-sm-2">
                                     <div className="col text-center text-sm-end">
-                                        <button class="button-stylling px-5 py-3 rounded bg-info border-0" role="button">
+                                        <Link class="button-stylling px-5 py-3 rounded bg-info border-0" role="button" to={'/about'} >
                                             <span class="text">About Us</span>
                                             <span>Learn More</span>
-                                        </button>
+                                        </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
                                         <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
@@ -81,10 +82,10 @@ export default function HeroSection() {
                                 <h4>Explore, Book, Enjoy - Your Event Journey Begins Here</h4>
                                 <div className="row row-cols-1 row-cols-sm-2">
                                     <div className="col text-center text-sm-end">
-                                        <button class="button-stylling px-5 py-3 rounded bg-info border-0" role="button">
+                                        <Link class="button-stylling px-5 py-3 rounded bg-info border-0" role="button" to={'/about'} >
                                             <span class="text">About Us</span>
                                             <span>Learn More</span>
-                                        </button>
+                                        </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
                                         <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
@@ -103,10 +104,10 @@ export default function HeroSection() {
                                 <h4>Explore, Book, Enjoy - Your Event Journey Begins Here</h4>
                                 <div className="row row-cols-1 row-cols-sm-2">
                                     <div className="col text-center text-sm-end">
-                                        <button class="button-stylling px-5 py-3 rounded bg-info border-0" role="button">
+                                        <Link class="button-stylling px-5 py-3 rounded bg-info border-0" role="button" to={'/about'} >
                                             <span class="text">About Us</span>
                                             <span>Learn More</span>
-                                        </button>
+                                        </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
                                         <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">

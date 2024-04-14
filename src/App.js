@@ -11,6 +11,7 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import Routes from 'routes/Routes';
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import AuthContextProvider from 'context/AuthContext';
 
 

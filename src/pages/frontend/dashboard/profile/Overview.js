@@ -58,8 +58,8 @@ export default function Overview({ userData }) {
                     <div className="col-12 col-lg-9 mt-3 mt-md-0">
                         <div className="card rounded-1 p-3 py-4 border-0 shadow mt-2 mt-md-4 mt-lg-0">
                             <h6 className='fw-bold '>Description</h6><hr />
-                            <p className='text-secondary'>{userData?.description ? userData?.description : "No description added yet"}</p>
-
+                            <div dangerouslySetInnerHTML={{ __html: userData?.description ? userData?.description : "No description added yet" }} />
+                            {/* <p className='text-secondary'>{userData?.description ? userData?.description : "No description added yet"}</p> */}
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './_events.scss';
-import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker } from 'antd'
+import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker, InputNumber } from 'antd'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { addEvent, uploadImage } from 'services/event';
+import LoadingIndicator from 'components/LoadingIndicator';
+import ReactQuill from 'react-quill';
 const { Dragger } = Upload;
 
 
@@ -10,67 +13,138 @@ const max_image_width = 590;
 const max_image_height = 300;
 
 
-const props = {
-    name: 'file',
-    multiple: false,
-    // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-    // onChange(info) {
-    //     const { status } = info.file;
-    //     console.log(info);
-    //     if (status !== 'uploading') {
-    //         console.log(info.file, info.fileList);
-    //     }
-    //     if (status === 'done') {
-    //         message.success(`${info.file.name} file uploaded successfully.`);
-    //     } else if (status === 'error') {
-    //         message.error(`${info.file.name} file upload failed.`);
-    //     }
-    // },
-    // onDrop(e) {
-    //     console.log('Dropped files', e.dataTransfer.files);
-    // },
-};
 
 export default function AddEvent() {
-    const [input1, setInput1] = useState('');
-    const [input2, setInput2] = useState('');
-    const [fields, setFields] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [description, setDescription] = useState("")
+    const [image, setImage] = useState("")
+    const [eventPrice, setEventPrice] = useState(null)
+    const [taxRate, setTaxRate] = useState(0.20)
+    const eventFormRef = useRef();
+
+    useEffect(() => {
+        window.scroll(0, 0)
+    }, [])
+
+
+    const props = {
+        name: 'file',
+        multiple: false,
+        fileList: [],
+        customRequest: async ({ file, onSuccess, onError }) => {
+            try {
+                let results = window.verifyImageSize(file);
+                if (results) {
+                    const img = new Image();
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = (e) => {
+                        img.src = e.target.result;
+                        img.onload = () => {
+                            const width = img.width;
+                            const height = img.height;
+                            if (width === max_image_width && height === max_image_height) {
+                                setImage(e.target.result)
+                                onSuccess(e.target.result)
+                            } else {
+                                setImage("")
+                                return window.toastify(`Image dimenstions should be ${max_image_width}x${max_image_height} px. Your image resolution is ${width}x${height} px`, "error")
+                            }
+
+                        }
+                    }
+                }
+
+            } catch (error) {
+                let msg = "Some error occured";
+                let { status, data } = error.response;
+                if (status == 400 || status == 401 || status == 500 || status == 413) {
+                    msg = data.message || data.msg;
+                    window.toastify(msg, "error");
+                }
+            }
+        },
+        onDrop(e) {
+            console.log('Dropped files', e.dataTransfer.files);
+        },
+    };
+
 
     const filterOption = (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
-    // Function to handle adding fields
-    const handleAddField = () => {
-        // Add the values of input fields to the list of fields
-        setFields([...fields, { input1, input2 }]);
-        // Clear input field values
-        setInput1('');
-        setInput2('');
-    };
 
 
-    const onFinish = (values) => {
-        const formattedDate = moment(values.date).format('YYYY-MM-DD');
+    const onFinish = async (values) => {
+        if (image === "") {
+            return window.toastify("Image is required.", "error");
+        }
+        const formattedDate = moment(values?.date?.$d).format('YYYY-MM-DD');
         const formattedDated = values.time.map(item => moment(item.$d).format('HH:mm'));
-        // console.log(formattedDated);
-        console.log('Received values of form:', { ...values, date: formattedDate, time: formattedDated });
+        const ticketPrice = Math.floor(Number(values?.ticketPrice) * (1 + taxRate));
+        const formattedSchedule = values.schedule.map(item => ({
+            time: moment(item.time.$d).format('HH:mm'),
+            details: item.details,
+        }));
+
+        let body = {
+            ...values, date: formattedDate, time: formattedDated, description,
+            schedule: formattedSchedule,
+            ticketPrice,
+        };
+        // const { image, ...newBody } = body;
+        setLoading(true)
+        try {
+            let { data } = await addEvent(body);
+
+            if (data) {
+                await uploadImage({ id: data?.event?._id, image });
+                eventFormRef.current.resetFields()
+                setDescription("")
+                setImage("")
+                window.toastify(data.msg, "success");
+            }
+        } catch (error) {
+            console.log(error);
+            let msg = "Some error occured";
+            let { status, data } = error.response;
+            if (status == 400 || status == 401 || status == 500 || status == 413) {
+                msg = data.message || data.msg;
+                window.toastify(msg, "error");
+            }
+        } finally {
+            setLoading(false)
+        }
+
 
     };
+
+    const handleValueChange = (e, w) => {
+        setEventPrice(e?.ticketPrice)
+    }
+    const handleChange = (html) => {
+        setDescription(html);
+    };
+
     return (
         <>
+            <LoadingIndicator loading={loading} />
+
             <div className='container px-2 px-sm-4 py-5' id='add-events'>
                 <div className="card border-0 shadow-lg py-5 px-4">
                     <h2 className='heading-stylling mb-5'>Add Event</h2>
                     <Form
                         name="dynamic_form_nest_item"
                         onFinish={onFinish}
+                        onValuesChange={handleValueChange}
                         autoComplete="off"
                         layout="vertical"
+                        ref={eventFormRef}
                     >
                         <div className="row g-3">
                             <div className="col-12 mb-5">
-                                <Form.Item name="image" rules={[{ required: true }]}>
-                                    <Dragger {...props} >
+                                {image === ""
+                                    ? <Dragger {...props} >
                                         <p className="ant-upload-drag-icon">
                                             <InboxOutlined />
                                         </p>
@@ -79,7 +153,14 @@ export default function AddEvent() {
                                             The maximum image size allowed is 2MB and image dimensions shoule be {max_image_width} x {max_image_height} pixels.
                                         </p>
                                     </Dragger>
-                                </Form.Item>
+                                    : <div className="text-center">
+                                        <img src={image} alt='Event Picture' className='img-fluid' />
+                                        <Dragger {...props} style={{ width: "fit-content", background: "#9accc9", margin: "10px auto" }}>
+                                            Change Picture
+                                        </Dragger>
+                                    </div>
+                                }
+
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Title" name="title" rules={[{ required: true }]}>
@@ -141,73 +222,211 @@ export default function AddEvent() {
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Select Date" name="date" rules={[{ required: true }]}>
-                                    <DatePicker className='w-100' placeholder='Select Date' size='large' format='YYYY-MM-DD' id='date' />
+                                    <DatePicker className='w-100' placeholder='Select Date' size='large' disabledDate={(current) => {
+                                        // Disable past dates
+                                        return current && current < moment().startOf("day");
+                                    }} format='YYYY-MM-DD' id='date' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Time" name="time" rules={[{ required: true }]}>
-                                    <TimePicker.RangePicker className='w-100' id="time" size='large' onChange={(e, s) => console.log(s)} />
+                                    <TimePicker.RangePicker className='w-100' id="time" size='large' format={'HH:mm'} />
+                                </Form.Item>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <Form.Item label="Organizer information" name="organizerInfo" >
+                                    <Input placeholder="Enter organizer information" id='location' size='large' />
+                                </Form.Item>
+                            </div>
+                            <div className="col-12 col-md-6">
+                                <Form.Item label="Event Rules and Policies" name="eventRules" >
+                                    <Input placeholder="Enter Rules and Policies" id='rules' size='large' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
                                 <label htmlFor="time" className='mb-2'>Enter schedule</label><br />
-                                <Form.List name="users">
+                                <Form.List name="schedule">
                                     {(fields, { add, remove }) => (
                                         <>
                                             {fields.map(({ key, name, ...restField }) => (
-                                                <Space
+                                                <div
                                                     key={key}
                                                     style={{
                                                         display: 'flex',
                                                         marginBottom: 8,
+                                                        paddingTop: 20,
                                                     }}
-                                                    align="baseline"
+                                                    align="center"
+                                                    className='row'
                                                 >
-                                                    <Form.Item
-                                                        {...restField}
-                                                        name={[name, 'first']}
-                                                        rules={[
-                                                            {
-                                                                required: true,
-                                                                message: 'Missing first name',
-                                                            },
-                                                        ]}
-                                                    >
-                                                        <Input placeholder="First Name" />
-                                                    </Form.Item>
-                                                    <Form.Item
-                                                        {...restField}
-                                                        name={[name, 'last']}
-                                                        rules={[
-                                                            {
-                                                                required: true,
-                                                                message: 'Missing last name',
-                                                            },
-                                                        ]}
-                                                    >
-                                                        <Input placeholder="Last Name" />
-                                                    </Form.Item>
-                                                    <MinusCircleOutlined onClick={() => remove(name)} />
-                                                </Space>
+                                                    <div className="col-12 col-lg-4">
+                                                        <Form.Item
+                                                            {...restField}
+                                                            name={[name, 'time']}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Time is required',
+                                                                },
+                                                            ]}
+                                                        >
+                                                            <TimePicker className='w-100' format={'HH:mm'} />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="col-12 col-lg-7">
+                                                        <Form.Item
+                                                            {...restField}
+                                                            name={[name, 'details']}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Details is required',
+                                                                },
+                                                            ]}
+                                                        >
+                                                            <Input placeholder="Enter Details" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="col-12 col-lg-1 pb-2 pb-lg-0">
+                                                        <MinusCircleOutlined onClick={() => remove(name)} />
+                                                    </div>
+                                                </div>
                                             ))}
-                                            <Form.Item>
+                                            <Form.Item className='mt-2'>
                                                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                                    Add field
+                                                    Add Time
                                                 </Button>
                                             </Form.Item>
                                         </>
                                     )}
                                 </Form.List>
                             </div>
+                            <div className="col-12 col-md-6">
+                                <label htmlFor="time" className='mb-2'>Speakers / Performers</label><br />
+                                <Form.List name="speakers">
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            {fields.map(({ key, name, ...restField }) => (
+                                                <div
+                                                    key={key}
+                                                    style={{
+                                                        display: 'flex',
+                                                        marginBottom: 8,
+                                                        paddingTop: 20,
+                                                    }}
+                                                    align="center"
+                                                    className='row'
+                                                >
+                                                    <div className="col-12 col-lg-4">
+                                                        <Form.Item
+                                                            {...restField}
+                                                            name={[name, 'name']}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Name is required',
+                                                                },
+                                                            ]}
+                                                        >
+                                                            <Input placeholder="Enter Speaker's Name" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="col-12 col-lg-7">
+                                                        <Form.Item
+                                                            {...restField}
+                                                            name={[name, 'details']}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: 'Details is required',
+                                                                },
+                                                            ]}
+                                                        >
+                                                            <Input placeholder="Enter Details" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="col-12 col-lg-1 pb-2 pb-lg-0">
+                                                        <MinusCircleOutlined onClick={() => remove(name)} />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <Form.Item className='mt-2'>
+                                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                                    Add Speaker / Performer
+                                                </Button>
+                                            </Form.Item>
+                                        </>
+                                    )}
+                                </Form.List>
+                            </div>
+                            <div className="col-12 col-md-4">
+                                <Form.Item label="Ticker Price" name="ticketPrice" extra={(eventPrice > 0 && eventPrice) ? `Ticket price for users will be ${Math.floor(eventPrice * (1 + taxRate))}. Adjust if needed.` : ""} rules={[
+                                    {
+                                        required: true,
+                                        message: 'Ticket price required',
+                                    },
+                                ]}>
+                                    <InputNumber className='w-100' size='large' min={1} placeholder='Enter Ticket Price (Rs.)' />
+                                </Form.Item>
+                            </div>
+                            <div className="col-12 col-md-4">
+                                <Form.Item label="Seats" name="seats" rules={[
+                                    {
+                                        required: true,
+                                        message: 'Seats required',
+                                    },
+                                ]}>
+                                    <InputNumber min={1} className='w-100' size='large' placeholder='Enter Total Seats' />
+                                </Form.Item>
+
+                            </div>
+                            <div className="col-12 col-md-4">
+                                <Form.Item label="Event Relevent Tags" name="tags" >
+                                    <Input className='w-100' size='large' placeholder='E.g. wedding, seminar' />
+                                </Form.Item>
+                            </div>
+                            <div className="col-12">
+                                <label className='mb-3' htmlFor="description">Event Description</label>
+                                <ReactQuill
+                                    id='description'
+                                    theme="snow"
+                                    placeholder='Say something about event...'
+                                    value={description}
+                                    onChange={handleChange}
+                                />
+                                {/* <Form.Item label="Event Description" name="description" >
+                                    <TextArea
+                                        showCount
+                                        id='description'
+                                        maxLength={5000}
+                                        autoSize
+                                        placeholder="Say something about event..."
+                                        style={{
+                                            minHeight: 140
+                                        }}
+                                    />
+                                </Form.Item> */}
+                            </div>
+                            <div className="col-12 text-danger">
+                                Fields with (*) are required.
+                            </div>
+
+
                             <div className="col-12">
                                 <Form.Item>
-                                    <button htmlType="submit" className='button-stylling-1 px-5 ms-auto'>Submit</button>
+                                    <button htmlType="submit" className='button-stylling-1 px-5 ms-auto' disabled={loading}>
+                                        {
+                                            loading
+                                                ? <div className='spinner-border spinner-border-sm'></div>
+                                                : "Submit"
+                                        }
+                                    </button>
                                 </Form.Item>
                             </div>
                         </div>
                     </Form>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     )
 }
