@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './_events.scss';
-import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker, InputNumber } from 'antd'
+import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker, InputNumber, Progress } from 'antd'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { addEvent, uploadImage, getEditEvent, updateEvent } from 'services/event';
+import { getEditEvent, updateEvent } from 'services/event';
 import LoadingIndicator from 'components/LoadingIndicator';
 import ReactQuill from 'react-quill';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { storage } from 'config/Firebase';
+
 const { Dragger } = Upload;
 
 
@@ -24,8 +27,11 @@ export default function EditEvent() {
     const [event, setEvent] = useState({})
     const [image, setImage] = useState("")
     const [eventPrice, setEventPrice] = useState(null)
+    const [imgLoading, setImgLoading] = useState(false)
     const [taxRate, setTaxRate] = useState(0.20)
+    const [imgProgress, setImgProgress] = useState(0)
     const eventFormRef = useRef();
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scroll(0, 0)
@@ -37,7 +43,7 @@ export default function EditEvent() {
             let { data } = await getEditEvent(id);
             setEvent(data?.data);
             setDescription(data?.data?.description);
-            setImage(process.env.REACT_APP_EVENT_WAVE_ROOT_URL + data?.data?.image);
+            setImage(data?.data?.image);
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
@@ -57,36 +63,42 @@ export default function EditEvent() {
         multiple: false,
         fileList: [],
         customRequest: async ({ file, onSuccess, onError }) => {
-            try {
-                let results = window.verifyImageSize(file);
-                if (results) {
-                    const img = new Image();
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = (e) => {
-                        img.src = e.target.result;
-                        img.onload = () => {
-                            const width = img.width;
-                            const height = img.height;
-                            if (width === max_image_width && height === max_image_height) {
-                                setImage(e.target.result)
-                                onSuccess(e.target.result)
-                            } else {
-                                // setImage("")
-                                return window.toastify(`Image dimenstions should be ${max_image_width}x${max_image_height} px. Your image resolution is ${width}x${height} px`, "error")
-                            }
+            let results = window.verifyImageSize(file);
+            if (results) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    const width = img.width;
+                    const height = img.height;
+                    if (width === max_image_width && height === max_image_height) {
+                        const fileExt = file.name.split('.').pop();
+                        const imagesRef = ref(storage, `events/${window.getRandomId()}.${fileExt}`)
+                        const uploadTask = uploadBytesResumable(imagesRef, file);
 
-                        }
+                        setImgLoading(true)
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                                setImgProgress(progress)
+                            },
+                            (error) => {
+                                window.toastify(error.message, "error")
+                                setImgLoading(false)
+                            },
+                            () => {
+                                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                    setImage(downloadURL);
+                                    setImgLoading(false)
+                                });
+                            }
+                        );
+                    } else {
+                        return window.toastify(`Image dimenstions should be ${max_image_width}x${max_image_height} px. Your image resolution is ${width}x${height} px`, "error")
                     }
                 }
 
-            } catch (error) {
-                let msg = "Some error occured";
-                let { status, data } = error.response;
-                if (status == 400 || status == 401 || status == 500 || status == 413) {
-                    msg = data.message || data.msg;
-                    window.toastify(msg, "error");
-                }
+
+
             }
         },
         onDrop(e) {
@@ -105,7 +117,7 @@ export default function EditEvent() {
             return window.toastify("Image is required.", "error");
         }
         const formattedDate = moment(values?.date?.$d).format('YYYY-MM-DD');
-        const formattedDated = values.time.map(item => moment(item.$d).format('HH:mm'));
+        const formattedDated = values?.time?.map(item => moment(item.$d).format('HH:mm'));
         const ticketPrice = Math.floor(Number(values?.ticketPrice) * (1 + taxRate));
         const formattedSchedule = values?.schedule?.map(item => (
             {
@@ -115,17 +127,14 @@ export default function EditEvent() {
         ))
         let body = {
             ...values, date: formattedDate, time: formattedDated, description,
-            ticketPrice, schedule: formattedSchedule
+            ticketPrice, schedule: formattedSchedule, image
         };
         setLoading(true)
         try {
             let { data } = await updateEvent(id, body);
-
-            if (data && !image.includes(process.env.REACT_APP_EVENT_WAVE_ROOT_URL)) {
-                await uploadImage({ id, image });
-                setImage("")
-            }
+            setImage("")
             window.toastify(data.msg, "success");
+            navigate("/dashboard/events/myEvents")
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
@@ -166,7 +175,7 @@ export default function EditEvent() {
                 // arrival_time: stop.arrival_time ? moment(stop.arrival_time).format('HH:mm') : null,
                 // departure_time: stop.departure_time ? moment(stop.departure_time).format('HH:mm') : null,
                 title: eventData?.title,
-                date: moment(eventData?.date),
+                date: eventData?.date ? dayjs(eventData?.date) : null,
                 category: eventData?.category,
                 country: eventData?.country,
                 city: eventData?.city,
@@ -209,23 +218,31 @@ export default function EditEvent() {
                         >
                             <div className="row g-3">
                                 <div className="col-12 mb-5">
-                                    {image === ""
-                                        ? <Dragger {...props} >
-                                            <p className="ant-upload-drag-icon">
-                                                <InboxOutlined />
-                                            </p>
-                                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                            <p className="ant-upload-hint">
-                                                The maximum image size allowed is 2MB and image dimensions shoule be {max_image_width} x {max_image_height} pixels.
-                                            </p>
-                                        </Dragger>
-                                        : <div className="text-center">
-                                            <img src={image} alt='Event Picture' className='img-fluid' />
-                                            <Dragger {...props} style={{ width: "fit-content", background: "#9accc9", margin: "10px auto" }}>
-                                                Change Picture
-                                            </Dragger>
+                                    {imgLoading
+                                        ? <div className='my-3 text-center'>
+                                            <Progress type="circle" percent={imgProgress} />
                                         </div>
+                                        : <>
+                                            {image === ""
+                                                ? <Dragger {...props} >
+                                                    <p className="ant-upload-drag-icon">
+                                                        <InboxOutlined />
+                                                    </p>
+                                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                                    <p className="ant-upload-hint">
+                                                        The maximum image size allowed is 2MB and image dimensions shoule be {max_image_width} x {max_image_height} pixels.
+                                                    </p>
+                                                </Dragger>
+                                                : <div className="text-center">
+                                                    <img src={image} alt='Event Picture' className='img-fluid' />
+                                                    <Dragger {...props} style={{ width: "fit-content", background: "#9accc9", margin: "10px auto" }}>
+                                                        Change Picture
+                                                    </Dragger>
+                                                </div>
+                                            }
+                                        </>
                                     }
+
 
                                 </div>
                                 <div className="col-12 col-md-6">

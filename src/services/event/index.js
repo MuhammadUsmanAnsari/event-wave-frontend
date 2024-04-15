@@ -20,3 +20,7 @@ export const getEditEvent = (id) => {
 export const updateEvent = (id, body) => {
     return put(`${root}/api/v1/event?id=${id}`, body);
 };
+
+export const getPopularEvents = (type) => {
+    return get(`${root}/api/v1/event/popular/${type}`);
+};

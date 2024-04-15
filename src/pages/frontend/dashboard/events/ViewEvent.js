@@ -57,7 +57,7 @@ export default function ViewEvent({ open, setOpen, id }) {
                         <>
                             <div className="row mt-5">
                                 <div className="col">
-                                    <img src={process.env.REACT_APP_EVENT_WAVE_ROOT_URL + event?.image} alt="event image" className='w-100 img-fluid rounded-3' />
+                                    <img src={event?.image} alt="event image" className='w-100 img-fluid rounded-3' />
                                 </div>
                             </div>
                             <div className="row mt-3">
@@ -155,7 +155,7 @@ export default function ViewEvent({ open, setOpen, id }) {
                                     <strong className='text-warning'>Related Tags</strong>
                                     <p>{event?.tags}</p>
                                 </div>
-                             
+
                                 <div className="col-12">
                                     <strong className='text-warning'>Description</strong>
                                     <div className='mt-4 border rounded p-3' dangerouslySetInnerHTML={{ __html: event?.description ? event?.description : "No description added yet" }} />

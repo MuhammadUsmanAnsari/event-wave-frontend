@@ -9,6 +9,9 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { useNavigate } from 'react-router-dom';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import ViewEvent from './ViewEvent';
+import { deleteObject, ref } from 'firebase/storage';
+import { storage } from 'config/Firebase';
+
 
 export default function MyEvents() {
     const [events, setEvents] = useState([]);
@@ -217,7 +220,7 @@ export default function MyEvents() {
                                     }}
                                 />
                             }
-                            onConfirm={() => handleDelEvent(record?._id)}
+                            onConfirm={() => handleDelEvent(record)}
                             okType='danger'
                             okText="Yes"
                             cancelText="No"
@@ -266,10 +269,13 @@ export default function MyEvents() {
         }
     }
 
-    const handleDelEvent = async (id) => {
+    const handleDelEvent = async (record) => {
+        const fileRef = ref(storage, record?.image);
         try {
-            let { data } = await delEvent(id);
-            window.toastify(data?.msg, "success");
+            deleteObject(fileRef).then(async () => {
+                let { data } = await delEvent(record?._id);
+                window.toastify(data?.msg, "success");
+            })
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
@@ -279,6 +285,7 @@ export default function MyEvents() {
                 window.toastify(msg, "error");
             }
         } finally {
+            console.log("usman");
             getEvents()
         }
     }
