@@ -9,7 +9,7 @@ import { getUser, updateUser, uploadImage } from 'services/auth';
 import LoadingIndicator from 'components/LoadingIndicator';
 import { useAuthContext } from 'context/AuthContext';
 import { storage } from 'config/Firebase';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 
 const initialLinks = {
     facebookLink: "",
@@ -108,28 +108,56 @@ export default function EditProfile() {
         const image = e.target.files[0];
         let results = window.verifyImageSize(image)
         if (results) {
-            const fileExt = image.name.split('.').pop();
-            const imagesRef = ref(storage, `users/${window.getRandomId()}.${fileExt}`)
-            const uploadTask = uploadBytesResumable(imagesRef, image);
+            if (user?.image?.includes("https://firebasestorage.googleapis.com")) {
+                const fileRef = ref(storage, user?.image);
+                deleteObject(fileRef).then(async () => {
+                    const fileExt = image.name.split('.').pop();
+                    const imagesRef = ref(storage, `users/${window.getRandomId()}.${fileExt}`)
+                    const uploadTask = uploadBytesResumable(imagesRef, image);
 
-            setImgLoading(true)
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setImgLoading(true)
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-                    setImgProgress(progress)
-                },
-                (error) => {
-                    window.toastify(error.message, "error")
-                    setImgLoading(false)
-                },
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        uploadProfileImg(downloadURL);
+                            setImgProgress(progress)
+                        },
+                        (error) => {
+                            window.toastify(error.message, "error")
+                            setImgLoading(false)
+                        },
+                        () => {
+                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                uploadProfileImg(downloadURL);
+                                setImgLoading(false)
+                            });
+                        }
+                    );
+                })
+            } else {
+                const fileExt = image.name.split('.').pop();
+                const imagesRef = ref(storage, `users/${window.getRandomId()}.${fileExt}`)
+                const uploadTask = uploadBytesResumable(imagesRef, image);
+
+                setImgLoading(true)
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+                        setImgProgress(progress)
+                    },
+                    (error) => {
+                        window.toastify(error.message, "error")
                         setImgLoading(false)
-                    });
-                }
-            );
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            uploadProfileImg(downloadURL);
+                            setImgLoading(false)
+                        });
+                    }
+                );
+            }
         }
     }
 
