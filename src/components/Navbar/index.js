@@ -77,7 +77,7 @@ export default function Index() {
                                     <Avatar
                                         size="large"
                                         style={{ cursor: "pointer" }}
-                                        src={process.env.REACT_APP_EVENT_WAVE_ROOT_URL + user?.image}
+                                        src={user?.image}
                                         icon={<UserOutlined />} />
 
                                 </Popover>

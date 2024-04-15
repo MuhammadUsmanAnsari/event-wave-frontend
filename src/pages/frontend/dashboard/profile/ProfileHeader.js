@@ -60,7 +60,7 @@ export default function ProfileHeader({ userData }) {
                                         xl: 90,
                                         xxl: 100,
                                     }}
-                                    src={process.env.REACT_APP_EVENT_WAVE_ROOT_URL + userData?.image}
+                                    src={userData?.image}
                                     icon={<UserOutlined />}
                                 />
                             </div>

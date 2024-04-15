@@ -17,6 +17,7 @@ export default function MyEvents() {
     const [events, setEvents] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [statusLoading, setStatusLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [modalEventId, setModalEventId] = useState("");
@@ -30,9 +31,11 @@ export default function MyEvents() {
     }, [])
 
     const getEvents = async () => {
+        setIsLoading(true)
         try {
             let { data } = await getMyEvents();
             setEvents(data?.data)
+            console.log(data?.data);
 
         } catch (error) {
             console.log(error);
@@ -43,9 +46,9 @@ export default function MyEvents() {
                 window.toastify(msg, "error");
             }
         } finally {
+            setIsLoading(false)
         }
     }
-
 
     // table search
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -274,6 +277,7 @@ export default function MyEvents() {
         try {
             deleteObject(fileRef).then(async () => {
                 let { data } = await delEvent(record?._id);
+                getEvents()
                 window.toastify(data?.msg, "success");
             })
         } catch (error) {
@@ -285,8 +289,6 @@ export default function MyEvents() {
                 window.toastify(msg, "error");
             }
         } finally {
-            console.log("usman");
-            getEvents()
         }
     }
 
@@ -295,7 +297,16 @@ export default function MyEvents() {
             <h2 className='heading-stylling mb-5 pt-4'>MY EVENTS</h2>
             <div className="row">
                 <div className="col" style={{ overflow: "auto" }}>
-                    <Table columns={columns} dataSource={events} />
+                    {
+                        isLoading
+                            ? <div className='my-5 text-center'>
+                                <div className="spinner-grow spinner-grow-sm bg-info"></div>
+                                <div className="spinner-grow spinner-grow-sm bg-warning mx-3"></div>
+                                <div className="spinner-grow spinner-grow-sm bg-info"></div>
+                            </div>
+                            : <Table columns={columns} dataSource={events} />
+                    }
+
                 </div>
             </div>
             <div className="row">
