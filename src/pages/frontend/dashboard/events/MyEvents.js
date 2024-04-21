@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { delEvent, getMyEvents, updateEvent } from 'services/event';
 import { Popconfirm, Spin, Switch } from 'antd';
-import { Button, Input, Space, Table } from 'antd';
+import { Button, Input, Space, Table, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
@@ -11,6 +11,7 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import ViewEvent from './ViewEvent';
 import { deleteObject, ref } from 'firebase/storage';
 import { storage } from 'config/Firebase';
+import CancelEvent from './CancelEvent';
 
 
 export default function MyEvents() {
@@ -20,6 +21,7 @@ export default function MyEvents() {
     const [isLoading, setIsLoading] = useState(false);
     const [statusLoading, setStatusLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
+    const [openCancelModal, setOpenCancelModal] = useState(false);
     const [modalEventId, setModalEventId] = useState("");
     const searchInput = useRef(null);
     const navigate = useNavigate();
@@ -35,13 +37,12 @@ export default function MyEvents() {
         try {
             let { data } = await getMyEvents();
             setEvents(data?.data)
-            console.log(data?.data);
 
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
             let { status, data } = error.response;
-            if (status == 400 || status == 401 || status == 500 || status == 413) {
+            if (status == 400 || status == 401 || status == 500 || status == 413 || status === 404) {
                 msg = data.message || data.msg;
                 window.toastify(msg, "error");
             }
@@ -157,6 +158,12 @@ export default function MyEvents() {
             ...getColumnSearchProps('title'),
         },
         {
+            title: 'Category',
+            dataIndex: 'category',
+            key: 'category',
+            ...getColumnSearchProps('category'),
+        },
+        {
             title: 'Country',
             dataIndex: 'country',
             key: 'country',
@@ -201,7 +208,7 @@ export default function MyEvents() {
             key: 'actions',
             render: (_, record) => (
                 <div className='d-flex justify-content-evenly align-items-center'>
-                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
+                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />                   
                     <Button type='dashed' onClick={() => {
                         setOpenModal(true)
                         setModalEventId(record?._id)
@@ -215,7 +222,7 @@ export default function MyEvents() {
                     <Space size="middle" className='ms-1'>
                         <Popconfirm
                             title="Delete the event"
-                            description="Are you sure to delete this event?"
+                            description="Are you sure you want to delete this event? This action will cancel the event for all attendees."
                             icon={
                                 <QuestionCircleOutlined
                                     style={{
@@ -251,7 +258,7 @@ export default function MyEvents() {
         }
 
         if (status === undefined) {
-            return window.toastify("Event is closed already. You can't change status", "error")
+            return window.toastify(`Event is ${record?.status}. You can't change status`, "error")
         }
 
         setStatusLoading(true)
@@ -312,6 +319,11 @@ export default function MyEvents() {
             <div className="row">
                 <div className="col">
                     {openModal && <ViewEvent open={openModal} setOpen={setOpenModal} id={modalEventId} />}
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    {openCancelModal && <CancelEvent open={openCancelModal} setOpen={setOpenCancelModal} id={modalEventId} />}
                 </div>
             </div>
         </div>

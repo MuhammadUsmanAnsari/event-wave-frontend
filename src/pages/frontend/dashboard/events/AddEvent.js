@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './_events.scss';
 import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker, InputNumber, Progress } from 'antd'
-import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { InboxOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { addEvent } from 'services/event';
 import LoadingIndicator from 'components/LoadingIndicator';
 import ReactQuill from 'react-quill';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import { storage } from 'config/Firebase';
 
 const { Dragger } = Upload;
@@ -81,6 +81,7 @@ export default function AddEvent() {
     };
 
 
+
     const filterOption = (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
@@ -98,10 +99,44 @@ export default function AddEvent() {
             details: item.details,
         }));
 
+        const updatedArray = await Promise.all(
+            values?.speakers?.map(async (item) => {
+                const file = item.img?.file; // Access the file from img if it exists
+                const maxSize = 1 * 1024 * 1024;
+
+                if (file) {
+                    if (file.type === 'image/png' || file.type === 'image/jpeg') {
+                        if (file.size <= maxSize) {
+                            const fileExt = file.name.split('.').pop();
+                            const storageRef = ref(storage, `speakers/${window.getRandomId()}.${fileExt}`);
+
+                            // Upload the file to Firebase Storage
+                            await uploadBytes(storageRef, file);
+
+                            // Get the download URL of the uploaded file
+                            const downloadURL = await getDownloadURL(storageRef);
+                            return {
+                                ...item,
+                                img: downloadURL,
+                            };
+                        } else {
+                            window.toastify('File size exceeds 1MB limit.', "error");
+                        }
+
+                    } else {
+                        window.toastify('Please select a PNG or JPEG image.', "error");
+                    }
+
+                } else {
+                    return item;
+                }
+            })
+        )
+
         let body = {
             ...values, date: formattedDate, time: formattedDated, description,
             schedule: formattedSchedule,
-            ticketPrice, image
+            ticketPrice, image, speakers: updatedArray
         };
         // const { image, ...newBody } = body;
         setLoading(true)
@@ -179,8 +214,17 @@ export default function AddEvent() {
 
                             </div>
                             <div className="col-12 col-md-6">
-                                <Form.Item label="Title" name="title" rules={[{ required: true }]}>
-                                    <Input placeholder="Enter Event Title" name='title' id='title' size='large' />
+                                <Form.Item label="Title" name="title" rules={[{ required: true, }, {
+                                    max: 100,
+                                    message: 'Title cannot exceed 90 characters',
+                                }]}>
+                                    <Input
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault(); // Prevent form submission on Enter key press
+                                            }
+                                        }}
+                                        placeholder="Enter Event Title" name='title' id='title' size='large' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
@@ -228,17 +272,29 @@ export default function AddEvent() {
                             </div>
                             <div className="col-12 col-md-4">
                                 <Form.Item label="City" name="city" rules={[{ required: true }]}>
-                                    <Input placeholder="Enter City" id='city' size='large' />
+                                    <Input placeholder="Enter City" id='city' onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} size='large' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-4">
                                 <Form.Item label="Location of Event" name="location" rules={[{ required: true }]}>
-                                    <Input placeholder="Enter Full Address" id='location' size='large' />
+                                    <Input placeholder="Enter Full Address" id='location' onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} size='large' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Select Date" name="date" rules={[{ required: true }]}>
-                                    <DatePicker className='w-100' placeholder='Select Date' size='large' disabledDate={(current) => {
+                                    <DatePicker className='w-100' onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} placeholder='Select Date' size='large' disabledDate={(current) => {
                                         // Disable past dates
                                         return current && current < moment().startOf("day");
                                     }} format='YYYY-MM-DD' id='date' />
@@ -246,17 +302,29 @@ export default function AddEvent() {
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Time" name="time" rules={[{ required: true }]}>
-                                    <TimePicker.RangePicker className='w-100' id="time" size='large' format={'HH:mm'} />
+                                    <TimePicker.RangePicker className='w-100' onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} id="time" size='large' format={'HH:mm'} />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Organizer information" name="organizerInfo" >
-                                    <Input placeholder="Enter organizer information" id='location' size='large' />
+                                    <Input placeholder="Enter organizer information" onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} id='location' size='large' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
                                 <Form.Item label="Event Rules and Policies" name="eventRules" >
-                                    <Input placeholder="Enter Rules and Policies" id='rules' size='large' />
+                                    <Input placeholder="Enter Rules and Policies" onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} id='rules' size='large' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-6">
@@ -286,7 +354,11 @@ export default function AddEvent() {
                                                                 },
                                                             ]}
                                                         >
-                                                            <TimePicker className='w-100' format={'HH:mm'} />
+                                                            <TimePicker className='w-100' onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault(); // Prevent form submission on Enter key press
+                                                                }
+                                                            }} format={'HH:mm'} />
                                                         </Form.Item>
                                                     </div>
                                                     <div className="col-12 col-lg-7">
@@ -300,7 +372,11 @@ export default function AddEvent() {
                                                                 },
                                                             ]}
                                                         >
-                                                            <Input placeholder="Enter Details" />
+                                                            <Input placeholder="Enter Details" onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault(); // Prevent form submission on Enter key press
+                                                                }
+                                                            }} />
                                                         </Form.Item>
                                                     </div>
                                                     <div className="col-12 col-lg-1 pb-2 pb-lg-0">
@@ -336,6 +412,17 @@ export default function AddEvent() {
                                                     <div className="col-12 col-lg-4">
                                                         <Form.Item
                                                             {...restField}
+                                                            name={[name, 'img']}
+                                                        >
+                                                            {/* <input type="file" name="" id="" /> */}
+                                                            <Upload beforeUpload={() => false} className='w-100' >
+                                                                <button className='btn btn-light border w-100' ><UploadOutlined /> Image</button>
+                                                            </Upload>
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="col-12 col-lg-4">
+                                                        <Form.Item
+                                                            {...restField}
                                                             name={[name, 'name']}
                                                             rules={[
                                                                 {
@@ -344,10 +431,26 @@ export default function AddEvent() {
                                                                 },
                                                             ]}
                                                         >
-                                                            <Input placeholder="Enter Speaker's Name" />
+                                                            <Input placeholder="Enter Name" onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault(); // Prevent form submission on Enter key press
+                                                                }
+                                                            }} />
                                                         </Form.Item>
                                                     </div>
-                                                    <div className="col-12 col-lg-7">
+                                                    <div className="col-12 col-lg-4">
+                                                        <Form.Item
+                                                            {...restField}
+                                                            name={[name, 'profession']}
+                                                        >
+                                                            <Input placeholder="Enter Profession" onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault(); // Prevent form submission on Enter key press
+                                                                }
+                                                            }} />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="col-12 col-lg-11">
                                                         <Form.Item
                                                             {...restField}
                                                             name={[name, 'details']}
@@ -358,7 +461,11 @@ export default function AddEvent() {
                                                                 },
                                                             ]}
                                                         >
-                                                            <Input placeholder="Enter Details" />
+                                                            <Input placeholder="Enter Details" onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') {
+                                                                    e.preventDefault(); // Prevent form submission on Enter key press
+                                                                }
+                                                            }} />
                                                         </Form.Item>
                                                     </div>
                                                     <div className="col-12 col-lg-1 pb-2 pb-lg-0">
@@ -382,7 +489,11 @@ export default function AddEvent() {
                                         message: 'Ticket price required',
                                     },
                                 ]}>
-                                    <InputNumber className='w-100' size='large' min={1} placeholder='Enter Ticket Price (Rs.)' />
+                                    <InputNumber className='w-100' size='large' min={1} onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} placeholder='Enter Ticket Price (Rs.)' />
                                 </Form.Item>
                             </div>
                             <div className="col-12 col-md-4">
@@ -392,13 +503,21 @@ export default function AddEvent() {
                                         message: 'Seats required',
                                     },
                                 ]}>
-                                    <InputNumber min={1} className='w-100' size='large' placeholder='Enter Total Seats' />
+                                    <InputNumber min={1} className='w-100' size='large' onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} placeholder='Enter Total Seats' />
                                 </Form.Item>
 
                             </div>
                             <div className="col-12 col-md-4">
                                 <Form.Item label="Event Relevent Tags" name="tags" >
-                                    <Input className='w-100' size='large' placeholder='E.g. wedding, seminar' />
+                                    <Input className='w-100' size='large' onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault(); // Prevent form submission on Enter key press
+                                        }
+                                    }} placeholder='E.g. wedding, seminar' />
                                 </Form.Item>
                             </div>
                             <div className="col-12">

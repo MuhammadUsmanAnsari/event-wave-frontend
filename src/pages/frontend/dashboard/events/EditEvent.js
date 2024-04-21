@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './_events.scss';
 import { Input, Select, Space, Form, Button, DatePicker, message, Upload, TimePicker, InputNumber, Progress } from 'antd'
-import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { InboxOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { getEditEvent, updateEvent } from 'services/event';
 import LoadingIndicator from 'components/LoadingIndicator';
 import ReactQuill from 'react-quill';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from 'config/Firebase';
 
 const { Dragger } = Upload;
@@ -71,27 +71,56 @@ export default function EditEvent() {
                     const width = img.width;
                     const height = img.height;
                     if (width === max_image_width && height === max_image_height) {
-                        const fileExt = file.name.split('.').pop();
-                        const imagesRef = ref(storage, `events/${window.getRandomId()}.${fileExt}`)
-                        const uploadTask = uploadBytesResumable(imagesRef, file);
+                        if (event?.image?.includes("https://firebasestorage.googleapis.com")) {
+                            const fileRef = ref(storage, event?.image);
+                            deleteObject(fileRef).then(async () => {
+                                const fileExt = file.name.split('.').pop();
+                                const imagesRef = ref(storage, `events/${window.getRandomId()}.${fileExt}`)
+                                const uploadTask = uploadBytesResumable(imagesRef, file);
 
-                        setImgLoading(true)
-                        uploadTask.on('state_changed',
-                            (snapshot) => {
-                                const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                                setImgProgress(progress)
-                            },
-                            (error) => {
-                                window.toastify(error.message, "error")
-                                setImgLoading(false)
-                            },
-                            () => {
-                                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                    setImage(downloadURL);
+                                setImgLoading(true)
+                                uploadTask.on('state_changed',
+                                    (snapshot) => {
+                                        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                                        setImgProgress(progress)
+                                    },
+                                    (error) => {
+                                        window.toastify(error.message, "error")
+                                        setImgLoading(false)
+                                    },
+                                    () => {
+                                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                            setImage(downloadURL);
+                                            setImgLoading(false)
+                                        });
+                                    }
+                                );
+                            })
+
+                        } else {
+                            const fileExt = file.name.split('.').pop();
+                            const imagesRef = ref(storage, `events/${window.getRandomId()}.${fileExt}`)
+                            const uploadTask = uploadBytesResumable(imagesRef, file);
+
+                            setImgLoading(true)
+                            uploadTask.on('state_changed',
+                                (snapshot) => {
+                                    const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                                    setImgProgress(progress)
+                                },
+                                (error) => {
+                                    window.toastify(error.message, "error")
                                     setImgLoading(false)
-                                });
-                            }
-                        );
+                                },
+                                () => {
+                                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                        setImage(downloadURL);
+                                        setImgLoading(false)
+                                    });
+                                }
+                            );
+                        }
+
                     } else {
                         return window.toastify(`Image dimenstions should be ${max_image_width}x${max_image_height} px. Your image resolution is ${width}x${height} px`, "error")
                     }
@@ -169,7 +198,9 @@ export default function EditEvent() {
                 })),
                 speakers: eventData?.speakers?.map((item) => ({
                     name: item?.name, // Convert time to moment object
-                    details: item.details, // Set details as provided
+                    details: item?.details, // Set details as provided
+                    profession: item?.profession, // Set details as provided
+                    img: item?.img, // Set details as provided
                 })),
                 // ...eventData,
                 // arrival_time: stop.arrival_time ? moment(stop.arrival_time).format('HH:mm') : null,
@@ -246,7 +277,10 @@ export default function EditEvent() {
 
                                 </div>
                                 <div className="col-12 col-md-6">
-                                    <Form.Item label="Title" name="title" rules={[{ required: true }]}>
+                                    <Form.Item label="Title" name="title" rules={[{ required: true }, {
+                                        max: 100,
+                                        message: 'Title cannot exceed 90 characters',
+                                    }]}>
                                         <Input placeholder="Enter Event Title" name='title' id='title' size='large' />
                                     </Form.Item>
                                 </div>
@@ -400,7 +434,7 @@ export default function EditEvent() {
                                                         align="center"
                                                         className='row'
                                                     >
-                                                        <div className="col-12 col-lg-4">
+                                                        <div className="col-12 col-lg-6">
                                                             <Form.Item
                                                                 {...restField}
                                                                 name={[name, 'name']}
@@ -411,10 +445,26 @@ export default function EditEvent() {
                                                                     },
                                                                 ]}
                                                             >
-                                                                <Input placeholder="Enter Speaker's Name" />
+                                                                <Input placeholder="Enter Name" onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault(); // Prevent form submission on Enter key press
+                                                                    }
+                                                                }} />
                                                             </Form.Item>
                                                         </div>
-                                                        <div className="col-12 col-lg-7">
+                                                        <div className="col-12 col-lg-6">
+                                                            <Form.Item
+                                                                {...restField}
+                                                                name={[name, 'profession']}
+                                                            >
+                                                                <Input placeholder="Enter Profession" onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault(); // Prevent form submission on Enter key press
+                                                                    }
+                                                                }} />
+                                                            </Form.Item>
+                                                        </div>
+                                                        <div className="col-12 col-lg-11">
                                                             <Form.Item
                                                                 {...restField}
                                                                 name={[name, 'details']}
@@ -425,9 +475,14 @@ export default function EditEvent() {
                                                                     },
                                                                 ]}
                                                             >
-                                                                <Input placeholder="Enter Details" />
+                                                                <Input placeholder="Enter Details" onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault(); // Prevent form submission on Enter key press
+                                                                    }
+                                                                }} />
                                                             </Form.Item>
                                                         </div>
+
                                                         <div className="col-12 col-lg-1 pb-2 pb-lg-0">
                                                             <MinusCircleOutlined onClick={() => remove(name)} />
                                                         </div>

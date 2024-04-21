@@ -33,7 +33,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className={`navbar navbar-expand-lg navbar-bg navbar-light `}>
+            <nav className={`navbar navbar-expand-lg navbar-bg navbar-light`}>
                 <div className="container">
                     <Link className="navbar-brand event-wave-logo" to="/">EventWave</Link>
                     <button className="navbar-toggler border" ref={expandButtonRef} onClick={() => setIsCollapsedClick(!isCollapsedClick)} type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

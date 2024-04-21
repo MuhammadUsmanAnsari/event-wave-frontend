@@ -1,9 +1,10 @@
-import { Modal } from 'antd'
+import { Avatar, Modal } from 'antd'
 import './_events.scss';
 import React, { useEffect, useState } from 'react'
 import { getEditEvent } from 'services/event'
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import { UserOutlined } from '@ant-design/icons';
 
 export default function ViewEvent({ open, setOpen, id }) {
     const [event, setEvent] = useState({});
@@ -101,7 +102,6 @@ export default function ViewEvent({ open, setOpen, id }) {
                                         <div className="col" >{event?.time ? event?.time[1] : ""}</div>
 
                                     </div>
-
                                 </div>
                                 <div className="col-12 mt-2">
                                     <strong className='text-warning'>Location:</strong>
@@ -115,34 +115,49 @@ export default function ViewEvent({ open, setOpen, id }) {
                                     <strong className='text-warning'>Rules and Policies:</strong>
                                     <p>{event?.eventRules}</p>
                                 </div><hr />
-                                <div className="col-12 col-md-6 mt-2 pb-3">
-                                    <strong className='text-warning '>Schedule</strong>
-                                    <ol class="list-group list-group-numbered mt-3">
-                                        {event?.schedule?.map((item, i) => {
-                                            return <li class="list-group-item d-flex justify-content-between align-items-start" key={i}>
-                                                <div class="ms-2 me-auto">
-                                                    <div class="fw-bold">{item.time}</div>
-                                                    <p>{item.details}</p>
-                                                </div>
-                                            </li>
-                                        })}
+                                {(event?.schedule && event?.schedule.length > 0)
+                                    &&
+                                    <div className="col-12 col-md-6 mt-2 pb-3">
+                                        <strong className='text-warning '>Schedule</strong>
+                                        <ol class="list-group list-group-numbered mt-3">
+                                            {event?.schedule?.map((item, i) => {
+                                                return <li class="list-group-item d-flex justify-content-between align-items-start" key={i}>
+                                                    <div class="ms-2 me-auto">
+                                                        <div class="fw-bold">{item.time}</div>
+                                                        <p>{item.details}</p>
+                                                    </div>
+                                                </li>
+                                            })}
 
-                                    </ol>
-                                </div>
-                                <div className="col-12 col-md-6 mt-2 pb-3">
-                                    <strong className='text-warning '>Speakers</strong>
-                                    <ol class="list-group list-group-numbered mt-3">
-                                        {event?.speakers?.map((item, i) => {
-                                            return <li class="list-group-item d-flex justify-content-between align-items-start" key={i}>
-                                                <div class="ms-2 me-auto">
-                                                    <div class="fw-bold">{item.name}</div>
-                                                    <p>{item.details}</p>
-                                                </div>
-                                            </li>
-                                        })}
+                                        </ol>
+                                    </div>
+                                }
+                                {(event?.speakers && event?.speakers.length > 0)
+                                    &&
+                                    <>
+                                        <div className="col-12 col-md-6 mt-2 pb-3">
+                                            <strong className='text-warning '>Speakers</strong>
+                                            <ol class="list-group list-group-numbered mt-3">
+                                                {event?.speakers?.map((item, i) => {
+                                                    return <li class="list-group-item d-flex justify-content-between align-items-start" key={i}>
+                                                        <div className='ms-2'>
+                                                            <Avatar
+                                                                size="small"
+                                                                src={item?.img}
+                                                                icon={<UserOutlined />} />
+                                                        </div>
+                                                        <div class="ms-2 me-auto">
+                                                            <div><strong>{item.name}</strong> ({item?.profession})</div>
+                                                            <p>{item.details}</p>
+                                                        </div>
+                                                    </li>
+                                                })}
 
-                                    </ol>
-                                </div><hr />
+                                            </ol>
+                                        </div>
+                                        <hr />
+                                    </>
+                                }
                                 <div className="col-12 col-md-4 mt-2">
                                     <strong className='text-warning'>Ticket Price</strong>
                                     <p><strong>Rs. </strong>{event?.ticketPrice}</p>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { useAuthContext } from 'context/AuthContext'
 import { Avatar, Button, Popover } from 'antd'
 import { UserOutlined } from '@ant-design/icons';
-import LogoutIcon from '@mui/icons-material/Logout';
 import ProfileMenu from './ProfileMenu'
 
 export default function Index() {
