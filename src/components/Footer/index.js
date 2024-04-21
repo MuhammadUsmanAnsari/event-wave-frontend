@@ -49,13 +49,13 @@ export default function index() {
                         <div className="col mt-5 mt-md-0">
                             <h4 className='mb-3'>Quick Links</h4>
                             <div>
-                                <Link>
+                                <Link to={'/'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
                                     Home
                                 </Link>
                             </div>
                             <div>
-                                <Link>
+                                <Link to={'/about'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
                                     About
                                 </Link>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { useAuthContext } from 'context/AuthContext'
 import { Avatar, Button, Popover } from 'antd'
 import { UserOutlined } from '@ant-design/icons';
-import LogoutIcon from '@mui/icons-material/Logout';
 import ProfileMenu from './ProfileMenu'
 
 export default function Index() {
@@ -56,9 +55,9 @@ export default function Index() {
                                     Categories
                                 </a>
                                 <ul className={`dropdown-menu pt-0 rounded-0 border-0 shadow ${dropdownOpen ? "show" : ""}`} data-bs-popper="static">
-                                    <li><a className="dropdown-item" href="#">Action</a></li>
-                                    <li><a className="dropdown-item" href="#">Another action</a></li>
-                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                    {window?.categories?.map((item, i) => {
+                                        return <li key={i}><a className="dropdown-item" href="#">{item}</a></li>
+                                    })}
                                 </ul>
                             </li>
                             <li className="nav-item mx-2">
@@ -77,7 +76,7 @@ export default function Index() {
                                     <Avatar
                                         size="large"
                                         style={{ cursor: "pointer" }}
-                                        src={process.env.REACT_APP_EVENT_WAVE_ROOT_URL + user?.image}
+                                        src={user?.image}
                                         icon={<UserOutlined />} />
 
                                 </Popover>

@@ -33,7 +33,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className={`navbar navbar-expand-lg navbar-bg navbar-light `}>
+            <nav className={`navbar navbar-expand-lg navbar-bg navbar-light`}>
                 <div className="container">
                     <Link className="navbar-brand event-wave-logo" to="/">EventWave</Link>
                     <button className="navbar-toggler border" ref={expandButtonRef} onClick={() => setIsCollapsedClick(!isCollapsedClick)} type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,9 +55,9 @@ export default function Navbar() {
                                     Categories
                                 </a>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="#">Action</a></li>
-                                    <li><a className="dropdown-item" href="#">Another action</a></li>
-                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                    {window?.categories?.map((item, i) => {
+                                        return <li key={i}><a className="dropdown-item" href="#">{item}</a></li>
+                                    })}
                                 </ul>
                             </li>
                             <li className="nav-item mx-2">
@@ -76,7 +76,7 @@ export default function Navbar() {
                                     <Avatar
                                         size="large"
                                         style={{ cursor: "pointer" }}
-                                        src={process.env.REACT_APP_EVENT_WAVE_ROOT_URL + user?.image}
+                                        src={user?.image}
                                         icon={<UserOutlined />} />
                                 </Popover>
                                 : <Link className='button-stylling-1 px-5' to="/auth/login">Login</Link>

@@ -34,6 +34,7 @@ export default function Login() {
             localStorage.setItem("user", JSON.stringify(userData));
             window.toastify(msg, "success");
             // navigate(pathName);
+            setToggle(!toggle)
             window.location.href = pathName; // Change '/new-route' to your desired route
 
         } catch (error) {
