@@ -39,3 +39,14 @@ export const getComments = (id, page) => {
 export const deleteComment = (id) => {
     return del(`${root}/api/v1/event/comment?id=${id}`);
 };
+
+export const getAdminPendingEvents = () => {
+    return get(`${root}/api/v1/event/getPendingEvents`);
+};
+
+export const rejectEvent = (id, reason) => {
+    return del(`${root}/api/v1/event/rejectEventByAdmin?id=${id}&reason=${reason}`);
+};
+export const publishEventByAdmin = (id) => {
+    return put(`${root}/api/v1/event/publishEventByAdmin?id=${id}`);
+};

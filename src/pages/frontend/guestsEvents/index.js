@@ -1,42 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from 'swiper/modules';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom'
+import Navbar from 'components/Navbar'
+import Footer from 'components/Footer'
+import Banner from 'components/background/Banner';
+import { getGuestEvents } from 'services/speakers';
+import LoadingIndicator from 'components/LoadingIndicator';
+import './_guestsEvents.scss';
+import seats from 'assets/pictures/seats.png';
+import moment from 'moment';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import seats from 'assets/pictures/seats.png';
-import noData from 'assets/gifs/noData.gif';
-import { getPopularEvents } from 'services/event';
-import moment from 'moment'
+import Testimonial from '../home/Testimonial';
 
-export default function PopularEvents() {
-    const [selectedTab, setSelectedTab] = useState("Business")
-    const [events, setEvents] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+export default function Index() {
+    const { name } = useParams();
+    const [isLoading, setIsLoading] = useState(true);
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
+        window.scroll(0, 0)
         getEvents();
-    }, [selectedTab])
+    }, [name])
 
     const getEvents = async () => {
-        setIsLoading(true)
         try {
-            let { data } = await getPopularEvents(selectedTab);
+            let { data } = await getGuestEvents(name);
             setEvents(data?.data)
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
-            let { status, data } = error.response;
+            let { status, data } = error?.response;
             if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
-                msg = data.message || data.msg;
-                setEvents([])
+                msg = data?.message || data?.msg;
+                // setEvents([])
                 window.toastify(msg, "error");
             }
         } finally {
             setIsLoading(false)
         }
     }
-
 
     const bookedSeats = (seatsBooked) => {
         return seatsBooked?.reduce((acc, currentItem) => acc + currentItem.seats, 0)
@@ -47,62 +49,20 @@ export default function PopularEvents() {
         const contentToCopy = `https://eventwawe.vercel.app/event/details/${id}`
         navigator.clipboard.writeText(contentToCopy)
             .then(() => {
-                window.toastify("Link copied to clipboard.", "success");            
+                window.toastify("Link copied to clipboard.", "success");
             })
             .catch((error) => {
                 window.toastify(error?.message, "error");
             });
     }
 
-
     return (
-        <div className='container mt-5 mt-sm-4 mb-5' id='popularEvents-section'>
-            <div className="row">
-                <div className="col">
-                    <h5 className='text-center text-warning'>Event</h5>
-                    <h2 className='heading-stylling display-5'>POPULAR EVENTS</h2>
-                </div>
-            </div>
-            <div className="row my-5">
-                <div className="col-12 col-md-8 offset-0 offset-md-2">
-                    <Swiper
-                        slidesPerView={4}
-                        navigation={true}
-                        loop={true}
-                        modules={[Autoplay, Navigation]}
-                        breakpoints={{
-                            1200: {
-                                slidesPerView: 6,
-                            },
-                            992: {
-                                slidesPerView: 5,
-                            },
-                            576: {
-                                slidesPerView: 4,
-                            },
-                        }}
-                        autoplay={{
-                            delay: 2000,
-                            disableOnInteraction: false,
-                        }}
-                        className="mySwiper">
-                        {window?.categories?.map((item, i) => {
-                            return <SwiperSlide key={i}><button className={`btn btn-link text-decoration-none ${selectedTab === item ? "text-warning" : "text-dark"}  fw-bold`} onClick={() => setSelectedTab(item)}>{item}</button></SwiperSlide>
-                        })}
-                    </Swiper>
-                </div>
-            </div>
-            {isLoading
-                ? <div className="row">
-                    <div className="col">
-                        <div className='my-5 text-center'>
-                            <div className="spinner-grow bg-info"></div>
-                            <div className="spinner-grow bg-warning mx-3"></div>
-                            <div className="spinner-grow bg-info"></div>
-                        </div>
-                    </div>
-                </div>
-                : <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ">
+        <>
+            <Navbar />
+            <LoadingIndicator loading={isLoading} />
+            <Banner title={"ALL YOU NEED TO KNOW"} pageTitle={"Speaker's events"} page={'Speaker'} />
+            <div className="container my-5 py-5">
+                <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 mb-3 mb-md-4" id='events-card-row'>
                     {events?.map((item, i) => {
                         return <div className="col d-flex align-items-stretch justify-content-center" key={i}>
                             <div class="card border-0 shadow rounded-4 w-100 overflow-hidden">
@@ -127,9 +87,9 @@ export default function PopularEvents() {
                                             <small>{item?.country}</small>
                                         </div>
                                     </div>
-                                    <h5 class="card-title">
+                                    <h6 class="card-title">
                                         <Link to={`/event/details/${item?._id}`}>{item?.title?.length > 50 ? item?.title?.substring(0, 50) + "..." : item?.title}</Link>
-                                    </h5>
+                                    </h6>
                                     <div className="d-flex justify-content-between align-items-center  mt-2 mb-2">
                                         <span>
                                             <Link to={`/event/details/${item?._id}`} className='text-warning'>Book Now</Link>
@@ -143,16 +103,9 @@ export default function PopularEvents() {
                         </div>
                     })}
                 </div>
-            }
-            <div className="row">
-                {(!events.length && !isLoading)
-                    && <div className='col my-4 text-center'>
-                        <img src={noData} alt="no data found" className='img-fluid' />
-                    </div>
-                }
             </div>
-
-        </div>
-
+            <Testimonial />
+            <Footer />
+        </>
     )
 }

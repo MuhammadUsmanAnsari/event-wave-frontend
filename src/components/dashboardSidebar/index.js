@@ -58,6 +58,19 @@ export default function Index({ collapsed }) {
         },
     ];
 
+    const menuItemsAdmin = [
+        {
+            icon: <CottageOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+            label: "Home",
+            key: "/"
+        },
+        {
+            icon: <CelebrationOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+            label: "Added Events",
+            key: "/dashboard/admin/events"
+        },
+    ];
+
     const items =
         (Object.keys(user).length > 0 && user?.role === "organizer")
             ? menuItemsOrganizer?.map(data => ({
@@ -70,16 +83,28 @@ export default function Index({ collapsed }) {
                     icon: child.icon
                 }))
             }))
-            : menuItemsAttandee?.map(data => ({
-                key: data.key,
-                icon: data.icon,
-                label: data.label,
-                children: data?.children?.map(child => ({
-                    key: child.key,
-                    label: child.label,
-                    icon: child.icon
+            : (Object.keys(user).length > 0 && user?.role === "attendee")
+                ? menuItemsAttandee?.map(data => ({
+                    key: data.key,
+                    icon: data.icon,
+                    label: data.label,
+                    children: data?.children?.map(child => ({
+                        key: child.key,
+                        label: child.label,
+                        icon: child.icon
+                    }))
                 }))
-            }));
+                : menuItemsAdmin?.map(data => ({
+                    key: data.key,
+                    icon: data.icon,
+                    label: data.label,
+                    children: data?.children?.map(child => ({
+                        key: child.key,
+                        label: child.label,
+                        icon: child.icon
+                    }))
+                }))
+        ;
 
     const handleMenu = (item) => {
         navigate(item.key);
@@ -98,13 +123,21 @@ export default function Index({ collapsed }) {
                         return currentPath.startsWith(item.key);
                     }
                 })
-                : menuItemsAttandee.find(item => {
-                    if (item.key === "/") {
-                        return currentPath === item.key;
-                    } else {
-                        return currentPath.startsWith(item.key);
-                    }
-                });
+                : user?.role === "attendee"
+                    ? menuItemsAttandee.find(item => {
+                        if (item.key === "/") {
+                            return currentPath === item.key;
+                        } else {
+                            return currentPath.startsWith(item.key);
+                        }
+                    })
+                    : menuItemsAdmin.find(item => {
+                        if (item.key === "/") {
+                            return currentPath === item.key;
+                        } else {
+                            return currentPath.startsWith(item.key);
+                        }
+                    });
 
         // If a menu item with children is selected, find the appropriate child item
         if (selectedMenuItem && selectedMenuItem.children && selectedMenuItem.children.length > 0) {

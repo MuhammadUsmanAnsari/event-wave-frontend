@@ -1,52 +1,49 @@
+import { Button, Input, Popconfirm, Space, Switch, Table } from 'antd';
+import LoadingIndicator from 'components/LoadingIndicator';
 import React, { useEffect, useRef, useState } from 'react'
-import { delEvent, getMyEvents, updateEvent } from 'services/event';
-import { Popconfirm, Spin, Switch } from 'antd';
-import { Button, Input, Space, Table, Tooltip } from 'antd';
-import Highlighter from 'react-highlight-words';
+import { getAdminPendingEvents, publishEventByAdmin } from 'services/event';
 import { SearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { useNavigate } from 'react-router-dom';
-import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import Highlighter from 'react-highlight-words';
 import ViewEvent from './ViewEvent';
+import RejectEvent from './RejectEvent';
 
-
-export default function MyEvents() {
-    const [events, setEvents] = useState([]);
+export default function Events() {
+    const [events, setEvents] = useState([])
+    const [loading, setLoading] = useState(true)
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [statusLoading, setStatusLoading] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
-    const [openCancelModal, setOpenCancelModal] = useState(false);
     const [modalEventId, setModalEventId] = useState("");
+    const [openModal, setOpenModal] = useState(false);
+    const [rejectModal, setRejectModal] = useState(false);
     const searchInput = useRef(null);
-    const navigate = useNavigate();
-
 
     useEffect(() => {
-        window.scroll(0, 0)
-        getEvents();
-    }, [])
+        getPendingEvents()
+    }, [rejectModal])
 
-    const getEvents = async () => {
-        setIsLoading(true)
+    const getPendingEvents = async () => {
         try {
-            let { data } = await getMyEvents();
+            let { data } = await getAdminPendingEvents();
             setEvents(data?.data)
-
+            console.log(data?.data);
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
             let { status, data } = error.response;
-            if (status == 400 || status == 401 || status == 500 || status == 413 || status === 404) {
+            if (status == 400 || status == 401 || status == 500 || status == 413) {
                 msg = data.message || data.msg;
                 window.toastify(msg, "error");
             }
         } finally {
-            setIsLoading(false)
+            setLoading(false)
         }
     }
+
+
 
     // table search
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -147,6 +144,11 @@ export default function MyEvents() {
     });
 
 
+
+
+
+
+
     const columns = [
         {
             title: 'Title',
@@ -179,33 +181,16 @@ export default function MyEvents() {
             ...getColumnSearchProps('date'),
         },
         {
-            title: 'Views',
-            dataIndex: 'views',
-            key: 'views',
-            render: (views) => (
-                <div> {views?.length}</div>
-            )
-        },
-        {
-            title: 'Likes',
-            dataIndex: 'likes',
-            key: 'likes',
-            render: (likes) => (
-                <div> {likes?.length}</div>
-            )
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            ...getColumnSearchProps('status'),
+            title: 'Added By',
+            dataIndex: ['addedBy', 'email'],
+            key: 'addedBy',
         },
         {
             title: 'Actions',
             key: 'actions',
+            align: 'center',
             render: (_, record) => (
-                <div className='d-flex justify-content-evenly align-items-center'>
-                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
+                <div className='d-flex justify-content-center align-items-center'>
                     <Button type='dashed' onClick={() => {
                         setOpenModal(true)
                         setModalEventId(record?._id)
@@ -213,77 +198,48 @@ export default function MyEvents() {
                         className='ms-1 d-flex align-items-center justify-content-center'>
                         <VisibilityTwoToneIcon fontSize='small' />
                     </Button>
-                    <Button type='default' disabled={
-                        record.status === "Closed"
-                            ? true : false
-                    } onClick={() => navigate(`/dashboard/events/edit/${record?._id}`)} className='ms-1 d-flex align-items-center justify-content-center'>
-                        <EditTwoToneIcon fontSize='small' />
-                    </Button>
+
                     <Space size="middle" className='ms-1'>
                         <Popconfirm
-                            title="Delete the event"
-                            description="Are you sure you want to delete this event? This action will cancel the event for all attendees."
+                            title="Publish the event"
+                            description="Are you sure you want to publish this event?"
                             icon={
                                 <QuestionCircleOutlined
                                     style={{
-                                        color: 'red',
+                                        color: 'green',
                                     }}
                                 />
                             }
-                            onConfirm={() => handleDelEvent(record)}
-                            okType='danger'
+                            onConfirm={() => handlePublishEvent(record)}
+                            okType='dashed'
                             okText="Yes"
                             cancelText="No"
                         >
-                            <Button danger className='d-flex align-items-center justify-content-center'>
-                                <DeleteTwoToneIcon fontSize='small' />
+                            <Button className='d-flex align-items-center justify-content-center'>
+                                Publish
                             </Button>
                         </Popconfirm>
                     </Space>
-                </div>
+                    <Space size="middle" className='ms-1'>
+                        <Button danger className='d-flex align-items-center justify-content-center' onClick={() => {
+                            setModalEventId(record?._id)
+                            setRejectModal(true)
+                        }}>
+                            Reject
+                        </Button>
+                    </Space>
+                </div >
 
             ),
-            // sorter: (a, b) => a.address.length - b.address.length,
-            // sortDirections: ['descend', 'ascend'],
         },
     ];
 
 
-    const handleStatus = async (record) => {
-        let status;
-        if (record?.status === "Published") {
-            status = "Draft"
-        } else if (record?.status === "Draft") {
-            status = "Published"
-        }
-
-        if (status === undefined) {
-            return window.toastify(`Event is ${record?.status}. You can't change status`, "error")
-        }
-
-        setStatusLoading(true)
+    const handlePublishEvent = async (record) => {
         try {
-            let { data } = await updateEvent(record?._id, { status });
+            let { data } = await publishEventByAdmin(record?._id);
             window.toastify(data?.msg, "success");
-        } catch (error) {
-            console.log(error);
-            let msg = "Some error occured";
-            let { status, data } = error.response;
-            if (status == 400 || status == 401 || status == 500 || status == 413) {
-                msg = data.message || data.msg;
-                window.toastify(msg, "error");
-            }
-        } finally {
-            getEvents()
-            setStatusLoading(false)
-        }
-    }
-
-    const handleDelEvent = async (record) => {
-        try {
-            let { data } = await delEvent(record?._id);
-            getEvents()
-            window.toastify(data?.msg, "success");
+            getPendingEvents()
         } catch (error) {
             console.log(error);
             let msg = "Some error occured";
@@ -297,28 +253,32 @@ export default function MyEvents() {
     }
 
     return (
-        <div className="container">
-            <h2 className='heading-stylling mb-5 pt-4'>MY EVENTS</h2>
-            <div className="row">
-                <div className="col" style={{ overflow: "auto" }}>
-                    {
-                        isLoading
-                            ? <div className='my-5 text-center'>
-                                <div className="spinner-grow spinner-grow-sm bg-info"></div>
-                                <div className="spinner-grow spinner-grow-sm bg-warning mx-3"></div>
-                                <div className="spinner-grow spinner-grow-sm bg-info"></div>
-                            </div>
-                            : <Table columns={columns} dataSource={events} />
-                    }
+        <>
+            <LoadingIndicator loading={loading} />
 
+            <div className="container">
+                <h2 className='heading-stylling mb-5 pt-4'>ADDED EVENTS</h2>
+                <div className="row">
+                    <div className="col" style={{ overflow: "auto" }}>
+                        {
+                            loading
+                                ? <div className='my-5 text-center'>
+                                    <div className="spinner-grow spinner-grow-sm bg-info"></div>
+                                    <div className="spinner-grow spinner-grow-sm bg-warning mx-3"></div>
+                                    <div className="spinner-grow spinner-grow-sm bg-info"></div>
+                                </div>
+                                : <Table columns={columns} dataSource={events} />
+                        }
+
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        {openModal && <ViewEvent open={openModal} setOpen={setOpenModal} id={modalEventId} />}
+                        {rejectModal && <RejectEvent open={rejectModal} setOpen={setRejectModal} id={modalEventId} />}
+                    </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col">
-                    {openModal && <ViewEvent open={openModal} setOpen={setOpenModal} id={modalEventId} />}
-                </div>
-            </div>
-        
-        </div>
+        </>
     )
 }

@@ -31,7 +31,7 @@ export default function Index() {
 
 
     useEffect(() => {
-        // window.scroll(0, 0)
+        window.scroll(0, 0)
         getEventData()
         addViewInEvent()
     }, [])
@@ -105,6 +105,7 @@ export default function Index() {
             setLoading(false)
         }
     }
+    const bookedSeats = event?.seatsBooked?.reduce((acc, currentItem) => acc + currentItem.seats, 0);
 
     return (
         <>
@@ -183,7 +184,7 @@ export default function Index() {
                                                 <div>
                                                     <h3 className='mt-4 fw-bold'>{event?.title}</h3>
                                                     <div className='d-flex justify-content-between'>
-                                                        <h6 className='text-warning mt-3 mb-5'><span className="text-dark">Seats Left: </span> {event?.seats - event?.seatsBooked?.length}</h6>
+                                                        <h6 className='text-warning mt-3 mb-5'><span className="text-dark">Seats Left: </span> {event?.seats - bookedSeats}</h6>
                                                         <h6 className='text-warning mt-3 mb-5 text-end'><span className="text-dark">Ticket Price: </span> Rs. {event?.ticketPrice}</h6>
                                                     </div>
 
@@ -194,9 +195,13 @@ export default function Index() {
                                                             <div className="col" >{event?.time ? event?.time[0] : ""}</div>
                                                             <div className="col" ><i class='bx bx-right-arrow-alt bx-fade-left fs-4 text-info' ></i></div>
                                                             <div className="col" >{event?.time ? event?.time[1] : ""}</div>
-
                                                         </div>
                                                     </div>
+                                                    {/* created date */}
+                                                    <>
+                                                        <h5 className='mt-5'><u>Event creation date</u></h5>
+                                                        <p>{moment(event?.createdAt).format('MMM D, YYYY')}</p>
+                                                    </>
 
                                                     {/* category */}
                                                     {(event?.category && event?.category !== "")
@@ -250,12 +255,12 @@ export default function Index() {
                                                     }
 
                                                     {/* speakers */}
-                                                    {(event?.speakers && event?.speakers?.length > 0)
+                                                    {(event?.guests && event?.guests?.length > 0)
                                                         && <>
                                                             <h5 className='mt-5 mb-4'><u>Speakers / Guests</u></h5>
                                                             <Timeline
                                                                 items={
-                                                                    event?.speakers?.map((item, i) => (
+                                                                    event?.guests?.map((item, i) => (
                                                                         {
                                                                             color: '#9accc9',
                                                                             children: (
@@ -307,7 +312,7 @@ export default function Index() {
                         }
                     </div>
                     <div className="col-12 col-md-4 mt-4 mt-md-0">
-                        <RightCol event={event} />
+                        <RightCol event={event} getEventData={getEventData} />
                     </div>
                 </div>
                 {event?.status === "Published" &&

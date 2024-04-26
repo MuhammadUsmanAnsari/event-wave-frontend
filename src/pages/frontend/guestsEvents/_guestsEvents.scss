@@ -1,0 +1,66 @@
+$info: #9accc9;
+$warning: #f5a998;
+
+#events-card-row {
+    // margin-bottom: 100px;
+
+    .col {
+        .card {
+            position: relative;
+
+            .card-img {
+                height: 200px;
+                overflow: hidden;
+                border-radius: 0px;
+                position: relative;
+
+                img {
+                    transition: all 0.4s ease;
+                    height: 100%;
+                }
+
+                .seats {
+                    position: absolute;
+                    bottom: 0;
+                    border-radius: 0 10px 0 0;
+                    font-weight: bold;
+                    font-size: large;
+                    // opacity: 0;
+                    transform: translateY(90px);
+                    z-index: 2;
+                    transition: all 0.3s ease;
+
+
+                }
+            }
+
+            .card-body {
+                .card-title {
+                    a {
+                        color: #000;
+                        text-decoration: none;
+
+                        &:hover {
+                            color: $info;
+                        }
+                    }
+                }
+            }
+
+            &:hover {
+                .card-img {
+                    img {
+                        transition: all 0.4s ease;
+                        transform: scale(1.1) rotate(3deg);
+                    }
+
+                    .seats {
+                        transition: all 0.3s ease;
+                        transform: translateY(0px);
+
+                    }
+                }
+            }
+        }
+    }
+}

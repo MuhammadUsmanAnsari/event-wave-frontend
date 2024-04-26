@@ -43,15 +43,15 @@ export default function ChangePassword() {
             <div className='container'>
                 <form onSubmit={handleSubmit}>
                     <div className="row g-3 g-sm-4 py-5">
-                        <div className="col-12">
+                        <div className="col-12 px-0 px-md-2">
                             <label htmlFor="oldPass" className='mb-2'>Old Password <span className='text-danger'>*</span></label>
                             <Input placeholder="Enter old password" required value={oldPassword} onChange={e => setOldPassword(e.target.value)} id='oldPass' size='large' />
                         </div>
-                        <div className="col-12 col-md-6">
+                        <div className="col-12 col-md-6 px-0 px-md-2">
                             <label htmlFor="newpass" className='mb-2'>New Password <span className='text-danger'>*</span></label>
                             <Input.Password placeholder="Enter new password" required value={password} onChange={e => setPassword(e.target.value)} id='newpass' size='large' />
                         </div>
-                        <div className="col-12 col-md-6">
+                        <div className="col-12 col-md-6 px-0 px-md-2">
                             <label htmlFor="confirmpass" className='mb-2'>Confirm Password <span className='text-danger'>*</span></label>
                             <Input.Password placeholder="Confirm password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} id='confirmpass' size='large' />
                         </div>

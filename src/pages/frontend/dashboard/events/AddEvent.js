@@ -99,44 +99,48 @@ export default function AddEvent() {
             details: item.details,
         }));
 
-        const updatedArray = await Promise.all(
-            values?.speakers?.map(async (item) => {
-                const file = item.img?.file; // Access the file from img if it exists
-                const maxSize = 1 * 1024 * 1024;
+        let updatedArray = [];
+        if (values?.guests && values?.guests?.length > 0) {
 
-                if (file) {
-                    if (file.type === 'image/png' || file.type === 'image/jpeg') {
-                        if (file.size <= maxSize) {
-                            const fileExt = file.name.split('.').pop();
-                            const storageRef = ref(storage, `speakers/${window.getRandomId()}.${fileExt}`);
+            updatedArray = await Promise.all(
+                values?.guests?.map(async (item) => {
+                    const file = item?.img?.file; // Access the file from img if it exists
+                    const maxSize = 1 * 1024 * 1024;
 
-                            // Upload the file to Firebase Storage
-                            await uploadBytes(storageRef, file);
+                    if (file) {
+                        if (file.type === 'image/png' || file.type === 'image/jpeg') {
+                            if (file.size <= maxSize) {
+                                const fileExt = file.name.split('.').pop();
+                                const storageRef = ref(storage, `guests/${window.getRandomId()}.${fileExt}`);
 
-                            // Get the download URL of the uploaded file
-                            const downloadURL = await getDownloadURL(storageRef);
-                            return {
-                                ...item,
-                                img: downloadURL,
-                            };
+                                // Upload the file to Firebase Storage
+                                await uploadBytes(storageRef, file);
+
+                                // Get the download URL of the uploaded file
+                                const downloadURL = await getDownloadURL(storageRef);
+                                return {
+                                    ...item,
+                                    img: downloadURL,
+                                };
+                            } else {
+                                window.toastify('File size exceeds 1MB limit.', "error");
+                            }
+                            
                         } else {
-                            window.toastify('File size exceeds 1MB limit.', "error");
+                            window.toastify('Please select a PNG or JPEG image.', "error");
                         }
 
                     } else {
-                        window.toastify('Please select a PNG or JPEG image.', "error");
+                        return item;
                     }
-
-                } else {
-                    return item;
-                }
-            })
-        )
+                })
+            )
+        }
 
         let body = {
             ...values, date: formattedDate, time: formattedDated, description,
             schedule: formattedSchedule,
-            ticketPrice, image, speakers: updatedArray
+            ticketPrice, image, guests: updatedArray
         };
         // const { image, ...newBody } = body;
         setLoading(true)
@@ -185,7 +189,7 @@ export default function AddEvent() {
                         ref={eventFormRef}
                     >
                         <div className="row g-3">
-                            <div className="col-12 mb-5">
+                            <div className="col-12 mb-5 px-0 px-md-2">
                                 {imgLoading
                                     ? <div className='my-3 text-center'>
                                         <Progress type="circle" percent={imgProgress} />
@@ -213,7 +217,7 @@ export default function AddEvent() {
 
 
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <Form.Item label="Title" name="title" rules={[{ required: true, }, {
                                     max: 100,
                                     message: 'Title cannot exceed 90 characters',
@@ -227,7 +231,7 @@ export default function AddEvent() {
                                         placeholder="Enter Event Title" name='title' id='title' size='large' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <Form.Item label="Category" name="category" rules={[{ required: true }]}>
                                     <Select
                                         showSearch
@@ -249,7 +253,7 @@ export default function AddEvent() {
                                 </Form.Item>
                             </div>
                             {/*  */}
-                            <div className="col-12 col-md-4">
+                            <div className="col-12 col-md-4 px-0 px-md-2">
                                 <Form.Item label="Country" name="country" rules={[{ required: true }]}>
                                     <Select
                                         showSearch
@@ -270,7 +274,7 @@ export default function AddEvent() {
                                     />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-4">
+                            <div className="col-12 col-md-4 px-0 px-md-2">
                                 <Form.Item label="City" name="city" rules={[{ required: true }]}>
                                     <Input placeholder="Enter City" id='city' onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -279,7 +283,7 @@ export default function AddEvent() {
                                     }} size='large' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-4">
+                            <div className="col-12 col-md-4 px-0 px-md-2">
                                 <Form.Item label="Location of Event" name="location" rules={[{ required: true }]}>
                                     <Input placeholder="Enter Full Address" id='location' onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -288,7 +292,7 @@ export default function AddEvent() {
                                     }} size='large' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <Form.Item label="Select Date" name="date" rules={[{ required: true }]}>
                                     <DatePicker className='w-100' onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -300,7 +304,7 @@ export default function AddEvent() {
                                     }} format='YYYY-MM-DD' id='date' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <Form.Item label="Time" name="time" rules={[{ required: true }]}>
                                     <TimePicker.RangePicker className='w-100' onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -309,7 +313,7 @@ export default function AddEvent() {
                                     }} id="time" size='large' format={'HH:mm'} />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <Form.Item label="Organizer information" name="organizerInfo" >
                                     <Input placeholder="Enter organizer information" onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -318,7 +322,7 @@ export default function AddEvent() {
                                     }} id='location' size='large' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <Form.Item label="Event Rules and Policies" name="eventRules" >
                                     <Input placeholder="Enter Rules and Policies" onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -327,7 +331,7 @@ export default function AddEvent() {
                                     }} id='rules' size='large' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-6">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
                                 <label htmlFor="time" className='mb-2'>Enter schedule</label><br />
                                 <Form.List name="schedule">
                                     {(fields, { add, remove }) => (
@@ -393,9 +397,9 @@ export default function AddEvent() {
                                     )}
                                 </Form.List>
                             </div>
-                            <div className="col-12 col-md-6">
-                                <label htmlFor="time" className='mb-2'>Speakers / Performers</label><br />
-                                <Form.List name="speakers">
+                            <div className="col-12 col-md-6 px-0 px-md-2">
+                                <label htmlFor="time" className='mb-2'>Speakers / Guests</label><br />
+                                <Form.List name="guests">
                                     {(fields, { add, remove }) => (
                                         <>
                                             {fields.map(({ key, name, ...restField }) => (
@@ -475,14 +479,14 @@ export default function AddEvent() {
                                             ))}
                                             <Form.Item className='mt-2'>
                                                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                                    Add Speaker / Performer
+                                                    Add Speaker / Guest
                                                 </Button>
                                             </Form.Item>
                                         </>
                                     )}
                                 </Form.List>
                             </div>
-                            <div className="col-12 col-md-4">
+                            <div className="col-12 col-md-4 px-0 px-md-2">
                                 <Form.Item label="Ticker Price" name="ticketPrice" extra={(eventPrice > 0 && eventPrice) ? `Ticket price for users will be ${Math.floor(eventPrice * (1 + taxRate))}. Adjust if needed.` : ""} rules={[
                                     {
                                         required: true,
@@ -496,7 +500,7 @@ export default function AddEvent() {
                                     }} placeholder='Enter Ticket Price (Rs.)' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12 col-md-4">
+                            <div className="col-12 col-md-4 px-0 px-md-2">
                                 <Form.Item label="Seats" name="seats" rules={[
                                     {
                                         required: true,
@@ -511,7 +515,7 @@ export default function AddEvent() {
                                 </Form.Item>
 
                             </div>
-                            <div className="col-12 col-md-4">
+                            <div className="col-12 col-md-4 px-0 px-md-2">
                                 <Form.Item label="Event Relevent Tags" name="tags" >
                                     <Input className='w-100' size='large' onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -520,7 +524,7 @@ export default function AddEvent() {
                                     }} placeholder='E.g. wedding, seminar' />
                                 </Form.Item>
                             </div>
-                            <div className="col-12">
+                            <div className="col-12 px-0 px-md-2">
                                 <label className='mb-3' htmlFor="description">Event Description</label>
                                 <ReactQuill
                                     id='description'

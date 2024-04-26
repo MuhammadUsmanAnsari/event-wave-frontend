@@ -35,3 +35,9 @@ export const updateUserPassword = (id, oldPassword, password) => {
 export const uploadImage = (body) => {
     return post(`${root}/api/v1/auth/uploadImage`, body);
 };
+export const getUserWithId = (id) => {
+    return get(`${root}/api/v1/auth/getUserWithId/${id}`);
+};
+export const followUser = (id) => {
+    return post(`${root}/api/v1/auth/followUser/${id}`);
+};

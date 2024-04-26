@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Avatar, Input, Pagination } from 'antd'
-import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Input, Pagination, Popconfirm } from 'antd'
+import { UserOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import LoadingIndicator from 'components/LoadingIndicator';
 import { addComment, deleteComment, getComments } from 'services/event';
@@ -90,51 +90,76 @@ export default function Comments({ id, getEventData }) {
     return (
         <>
             <LoadingIndicator loading={commentLoading} />
-
-            <h2 className='heading-stylling mt-5' >Comments</h2>
-            <div className="row my-5">
-                <div className="col text-center">
-                    <Pagination className='w-100' responsive onChange={e => setPage(e)} defaultCurrent={1} total={commentsCount} />
-                </div>
-            </div>
-            <div className="row row-cols-1">
-                <div className="col mb-5">
-                    {comments?.map((item, i) => {
-                        return <div key={i} className="card border-0 shadow p-3 mt-4" id='comment-text-card'>
-                            <div className="d-flex align-items-center gap-4">
-                                <div >
-                                    <Avatar src={item?.addedBy?.image} shape="square" size={50} icon={<UserOutlined />} />
-                                </div>
-                                <div className='w-100'>
-                                    {/* <div className="d-flex"> */}
-                                    <h6>{item?.fullName}</h6>
-                                    <div><small>{item?.addedBy?.fullName}</small></div>
-                                    {/* </div> */}
-                                </div>
-                            </div>
-                            <p className='text-secondary mt-3'>
-                                {item?.comment}
-                            </p>
-                            <div className="d-flex justify-content-between">
-                                <div>
-                                    <small>{moment(item?.createdAt).format('MMM D, YYYY')}</small>
-                                    <small className='border-start ms-2 ps-2'>{moment(item?.createdAt).format('hh:mm a')}</small>
-                                </div>
-                                {user?._id === item?.addedBy?._id
-                                    && <div>
-                                        <button className='btn btn-outline-danger btn-sm' disabled={delLoading} onClick={() => handleDeleteComment(item)}>
-                                            {delLoading
-                                                ? <div className='spinner-border spinner-border-sm'></div>
-                                                : <DeleteTwoToneIcon fontSize='small' />
-                                            }
-
-                                        </button>
-                                    </div>
-                                }
-                            </div>
+            {
+                comments?.length > 0 && <>
+                    <h2 className='heading-stylling mt-5' >Comments</h2>
+                    <div className="row my-5">
+                        <div className="col text-center">
+                            <Pagination className='w-100' responsive onChange={e => setPage(e)} defaultCurrent={1} total={commentsCount} />
                         </div>
-                    })}
-                </div><hr />
+                    </div>
+                </>
+            }
+            <div className="row row-cols-1">
+                {
+                    comments?.length > 0 && <>
+
+                        <div className="col mb-5">
+                            {comments?.map((item, i) => {
+                                return <div key={i} className="card border-0 shadow p-3 mt-4" id='comment-text-card'>
+                                    <div className="d-flex align-items-center gap-4">
+                                        <div >
+                                            <Avatar src={item?.addedBy?.image} shape="square" size={50} icon={<UserOutlined />} />
+                                        </div>
+                                        <div className='w-100'>
+                                            {/* <div className="d-flex"> */}
+                                            <h6>{item?.fullName}</h6>
+                                            <div><small>{item?.addedBy?.fullName}</small></div>
+                                            {/* </div> */}
+                                        </div>
+                                    </div>
+                                    <p className='text-secondary mt-3'>
+                                        {item?.comment}
+                                    </p>
+                                    <div className="text-secondary d-flex justify-content-between">
+                                        <div>
+                                            <small>{moment(item?.createdAt).format('MMM D, YYYY')}</small>
+                                            <small className='border-start ms-2 ps-2'>{moment(item?.createdAt).format('hh:mm a')}</small>
+                                        </div>
+                                        {user?._id === item?.addedBy?._id
+                                            && <div>
+                                                <Popconfirm
+                                                    title="Delete the Comment"
+                                                    description="Are you sure you want to delete this comment?"
+                                                    icon={
+                                                        <QuestionCircleOutlined
+                                                            style={{
+                                                                color: 'red',
+                                                            }}
+                                                        />
+                                                    }
+                                                    onConfirm={() => handleDeleteComment(item)}
+                                                    okType='danger'
+                                                    okText="Yes"
+                                                    cancelText="No"
+                                                >
+                                                    <button className='btn btn-outline-danger btn-sm' disabled={delLoading} >
+                                                        {delLoading
+                                                            ? <div className='spinner-border spinner-border-sm'></div>
+                                                            : <DeleteTwoToneIcon fontSize='small' />
+                                                        }
+
+                                                    </button>
+                                                </Popconfirm>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            })}
+                        </div><hr />
+                    </>
+                }
+
                 <div className="col mt-4 ">
                     <div className="card border-0 shadow p-4">
                         <h5>Leave Your Comment</h5>

@@ -54,9 +54,9 @@ export default function AuthContextProvider({ children }) {
     } catch (error) {
       let msg = "Some error occured";
       console.log(error);
-      let { status, data } = error.response;
+      let { status, data } = error?.response;
       if (status == 400 || status == 401 || status == 500) {
-        msg = data.message;
+        msg = data?.message;
         window.toastify(msg, "error");
       }
     }

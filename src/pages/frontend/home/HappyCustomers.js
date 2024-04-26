@@ -4,11 +4,32 @@ import speaker from 'assets/pictures/happy-customers/speakers.png';
 import events from 'assets/pictures/happy-customers/events.png';
 import users from 'assets/pictures/happy-customers/users.png';
 import tickets from 'assets/pictures/happy-customers/tickets.png';
+import { getHomeDetails } from "services/details";
 
 
 export default function HappyCustomers() {
+    const [data, setData] = useState({})
 
+    useEffect(() => {
+        getDetails();
+    }, [])
 
+    const getDetails = async () => {
+        try {
+            let { data } = await getHomeDetails();
+            setData(data?.data)
+        } catch (error) {
+            console.log(error);
+            let msg = "Some error occured";
+            let { status, data } = error?.response;
+            if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
+                msg = data?.message || data?.msg;
+                // setEvents([])
+                window.toastify(msg, "error");
+            }
+        } finally {
+        }
+    }
     return (
         <div className='my-5' id='happyCustomers-section'>
             <div className="absolute-layer"></div>
@@ -18,7 +39,7 @@ export default function HappyCustomers() {
                         <div className="col">
                             <CountUp
                                 start={0}
-                                end={250}
+                                end={data?.guests}
                                 duration={2}
                                 enableScrollSpy
                             >
@@ -29,16 +50,17 @@ export default function HappyCustomers() {
                                             <span ref={countUpRef} />
                                         </h1>
                                         <h4>
-                                            Best Speakers
+                                            Valuable Guests
                                         </h4>
                                     </div>
                                 )}
                             </CountUp>
                         </div>
+                        <hr className="w-75 mx-auto d-block d-sm-none" />
                         <div className="col">
                             <CountUp
                                 start={0}
-                                end={1500}
+                                end={data?.events}
                                 duration={2}
                                 enableScrollSpy
                             >
@@ -55,10 +77,11 @@ export default function HappyCustomers() {
                                 )}
                             </CountUp>
                         </div>
+                        <hr className="w-75 mx-auto d-block d-sm-none" />
                         <div className="col">
                             <CountUp
                                 start={0}
-                                end={1700}
+                                end={data?.users}
                                 duration={2}
                                 enableScrollSpy
                             >
@@ -75,10 +98,11 @@ export default function HappyCustomers() {
                                 )}
                             </CountUp>
                         </div>
+                        <hr className="w-75 mx-auto d-block d-sm-none" />
                         <div className="col">
                             <CountUp
                                 start={0}
-                                end={2300}
+                                end={data?.soldTickets}
                                 duration={2}
                                 enableScrollSpy
                             >

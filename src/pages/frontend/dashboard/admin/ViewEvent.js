@@ -1,5 +1,5 @@
 import { Avatar, Modal } from 'antd'
-import './_events.scss';
+import '../events/_events.scss';
 import React, { useEffect, useState } from 'react'
 import { getEditEvent } from 'services/event'
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
@@ -64,19 +64,7 @@ export default function ViewEvent({ open, setOpen, id }) {
                             </div>
                             <div className="row mt-3">
                                 <div className="col-12 mb-4">
-                                    <div className='d-block d-sm-flex justify-content-between'>
-                                        <h4>{event?.title}</h4>
-                                        <div className='ms-2'>
-                                            <span className='d-flex align-items-center'>
-                                                <VisibilityTwoToneIcon fontSize='small' className='me-1 text-secondary' />
-                                                <span className='text-secondary'>{event?.views?.length}</span>
-                                                <FavoriteTwoToneIcon fontSize='small' className='ms-3 me-1 text-danger' />
-                                                <span className='text-danger'>{event?.likes?.length}</span>
-                                                <ChatBubbleTwoToneIcon fontSize='small' className='ms-3 me-1 text-primary' />
-                                                <span className='text-primary'>{event?.comments?.length}</span>
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <h4>{event?.title}</h4>
                                 </div>
                                 <div className="col-12 col-sm-6 col-md-4 mt-4 mt-sm-0">
                                     <strong className='text-warning'>Category: </strong>{event?.category}

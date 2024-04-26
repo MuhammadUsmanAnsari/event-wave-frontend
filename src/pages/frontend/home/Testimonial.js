@@ -50,7 +50,7 @@ const initialTestimonials = [
 export default function Testimonial() {
     return (
         <div className="container" id="testimonial-section">
-            <div className="row mt-3 mb-5">
+            <div className="row mt-5 mt-md-3 mb-5">
                 <div className="col">
                     <h5 className='text-center text-warning'>Testimonial</h5>
                     <h2 className='heading-stylling display-5'>PEOPLE REVIEWS</h2>

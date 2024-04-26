@@ -18,19 +18,26 @@ export default function ProfileMenu() {
     return (
         <div id='profileMenu-section'>
             <hr />
-            <button className='btn btn-light' onClick={() => navigate("/dashboard/profile")}>
-                <span><PermIdentityOutlinedIcon fontSize='small' /></span>
-                <span>Profile</span>
-            </button>
+            {user?.role !== "admin" &&
+                <button className='btn btn-light' onClick={() => navigate("/dashboard/profile")}>
+                    <span><PermIdentityOutlinedIcon fontSize='small' /></span>
+                    <span>Profile</span>
+                </button>
+            }
             {user?.role === "organizer" && <button className='btn btn-light' onClick={() => navigate("/dashboard/events/myEvents")}>
                 <span><CelebrationOutlinedIcon fontSize='small' /></span>
                 <span>My Events</span>
             </button>}
-
-            <button className='btn btn-light' onClick={() => navigate("/dashboard")}>
-                <span><SpaceDashboardOutlinedIcon fontSize='small' /></span>
-                <span>Dashboard</span>
-            </button>
+            {user?.role === "admin" && <button className='btn btn-light' onClick={() => navigate("/dashboard/admin/events")}>
+                <span><CelebrationOutlinedIcon fontSize='small' /></span>
+                <span>Added Events</span>
+            </button>}
+            {user?.role !== "admin" &&
+                <button className='btn btn-light' onClick={() => navigate("/dashboard")}>
+                    <span><SpaceDashboardOutlinedIcon fontSize='small' /></span>
+                    <span>Dashboard</span>
+                </button>
+            }
             <hr />
             <button className='btn btn-light w-100' onClick={handleLogout}>
                 <span><LogoutIcon fontSize='small' /></span>

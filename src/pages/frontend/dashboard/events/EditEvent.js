@@ -196,7 +196,7 @@ export default function EditEvent() {
                     time: dayjs(item?.time, 'HH:mm'), // Convert time to moment object
                     details: item.details, // Set details as provided
                 })),
-                speakers: eventData?.speakers?.map((item) => ({
+                guests: eventData?.guests?.map((item) => ({
                     name: item?.name, // Convert time to moment object
                     details: item?.details, // Set details as provided
                     profession: item?.profession, // Set details as provided
@@ -419,8 +419,8 @@ export default function EditEvent() {
                                     </Form.List>
                                 </div>
                                 <div className="col-12 col-md-6">
-                                    <label htmlFor="time" className='mb-2'>Speakers / Performers</label><br />
-                                    <Form.List name="speakers">
+                                    <label htmlFor="time" className='mb-2'>Speakers / Guests</label><br />
+                                    <Form.List name="guests">
                                         {(fields, { add, remove }) => (
                                             <>
                                                 {fields.map(({ key, name, ...restField }) => (
@@ -490,7 +490,7 @@ export default function EditEvent() {
                                                 ))}
                                                 <Form.Item className='mt-2'>
                                                     <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                                        Add Speaker / Performer
+                                                        Add Speaker / Guest
                                                     </Button>
                                                 </Form.Item>
                                             </>
