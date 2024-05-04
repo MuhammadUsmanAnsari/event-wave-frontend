@@ -12,8 +12,7 @@ const reducer = (state, { type, payload }) => {
     case "SET_LOGGED_IN":
       return { ...state, isAuthenticated: true, user: payload.user }
     case "SET_LOGGED_OUT":
-      localStorage.removeItem("jwtoken");
-      localStorage.removeItem("user");
+      localStorage.clear()
       return initialState
     default:
       return state

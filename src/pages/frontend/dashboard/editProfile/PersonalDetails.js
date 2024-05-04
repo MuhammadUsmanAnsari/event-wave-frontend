@@ -16,6 +16,7 @@ export default function PersonalDetails() {
   const [country, setCountry] = useState(user?.country ? user?.country : "")
   const [city, setCity] = useState(user?.city ? user?.city : "")
   const [description, setDescription] = useState(user?.description ? user?.description : "")
+  const [gender, setGender] = useState(user?.gender ? user?.gender : "")
   const [loading, setLoading] = useState(false)
   // const [setDescription, setDescription] = useState('');
 
@@ -31,7 +32,7 @@ export default function PersonalDetails() {
     let fullName = `${firstName} ${lastName}`;
 
     let body = {
-      firstName, lastName, fullName, idCard, phone, profession, country, city, description
+      firstName, lastName, fullName, idCard, phone, profession, country, city, description, gender
     }
 
     setLoading(true)
@@ -50,6 +51,8 @@ export default function PersonalDetails() {
       setLoading(false)
     }
   }
+
+  const gendersOptions = ["Male", "Female"]
   return (
     <>
       <LoadingIndicator loading={loading} />
@@ -65,13 +68,33 @@ export default function PersonalDetails() {
               <label htmlFor="email" className='mb-2'>Email Address</label>
               <Input placeholder="Your email" id='email' value={user?.email} disabled size='large' />
             </div>
-            <div className="col-12 col-md-6 px-0 px-md-2">
+            <div className="col-12 col-md-4 px-0 px-md-2">
               <label htmlFor="firstName" className='mb-2'>First Name</label>
               <Input placeholder="Enter your first name" value={firstName} onChange={e => setFirstName(e.target.value)} id='firstName' size='large' />
             </div>
-            <div className="col-12 col-md-6 px-0 px-md-2">
+            <div className="col-12 col-md-4 px-0 px-md-2">
               <label htmlFor="lastName" className='mb-2'>Last Name</label>
               <Input placeholder="Enter your last name" value={lastName} onChange={e => setLastName(e.target.value)} id='lastName' size='large' />
+            </div>
+            <div className="col-12 col-md-4 px-0 px-md-2">
+              <label htmlFor="lastName" className='mb-2'>Gender</label>
+              <Select
+                showSearch
+                size='large'
+                id='gender'
+                value={gender}
+                onChange={e => setGender(e)}
+                style={{ width: "100%" }}
+                placeholder="Select gender"
+                optionFilterProp="children"
+                filterOption={filterOption}
+                options={gendersOptions?.map((item, i) => {
+                  return {
+                    value: item,
+                    label: item,
+                  }
+                })}
+              />
             </div>
             {user?.role === "organizer" && <div className="col-12 px-0 px-md-2">
               <label htmlFor="idCard" className='mb-2'>ID Number</label>

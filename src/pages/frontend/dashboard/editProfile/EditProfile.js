@@ -10,6 +10,7 @@ import LoadingIndicator from 'components/LoadingIndicator';
 import { useAuthContext } from 'context/AuthContext';
 import { storage } from 'config/Firebase';
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import ChangeUserRole from './ChangeUserRole';
 
 const initialLinks = {
     facebookLink: "",
@@ -189,6 +190,20 @@ export default function EditProfile() {
             label: 'Change Password',
             key: 2,
         },
+        {
+            label: 'Change User Role',
+            key: 3,
+        },
+    ];
+    const itemsOrganizer = [
+        {
+            label: 'Personal Details',
+            key: 1,
+        },
+        {
+            label: 'Change Password',
+            key: 2,
+        },
     ];
 
     return (
@@ -308,9 +323,10 @@ export default function EditProfile() {
                         </div>
                         <div className="col-12 col-lg-9 mt-4 mt-lg-0">
                             <div className="card rounded-1 px-3  border-0 shadow ">
-                                <Menu onClick={onClick} selectedKeys={[current]} className='pt-1' mode="horizontal" items={items} />
+                                <Menu onClick={onClick} selectedKeys={[current]} className='pt-1' mode="horizontal" items={user?.role === "organizer" ? itemsOrganizer : items} />
                                 {current === "1" && <PersonalDetails />}
                                 {current === "2" && <ChangePassword />}
+                                {current === "3" && <ChangeUserRole />}
 
                             </div>
                         </div>

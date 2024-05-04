@@ -1,0 +1,119 @@
+$info: #9accc9;
+$warning: #f5a998;
+
+@import url('https://fonts.googleapis.com/css2?family=Arizonia&family=Dancing+Script:wght@400..700&family=Madimi+One&family=Noto+Nastaliq+Urdu:wght@400..700&family=Tilt+Neon&family=Varela+Round&display=swap');
+
+#contact-section {
+    .row {
+        .col:nth-child(1) {
+            .row {
+                position: relative;
+                background-color: rgba($color: #fff, $alpha: 0.5);
+                backdrop-filter: blur(14px);
+                overflow: hidden;
+
+                &:nth-child(odd) {
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        width: 40px;
+                        height: 40px;
+                        background-color: $info;
+                        border-radius: 50%;
+                        filter: blur(3px);
+                        bottom: -20px;
+                        right: -20px;
+                        visibility: hidden;
+                        // transform: translateX(20px) translateY(20px);
+                        transition: 0.4s;
+                    }
+                }
+
+                &:nth-child(even) {
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        width: 40px;
+                        height: 40px;
+                        background-color: $warning;
+                        border-radius: 50%;
+                        filter: blur(3px);
+                        bottom: -20px;
+                        right: -20px;
+                        visibility: hidden;
+                        // transform: translateX(20px) translateY(20px);
+                        transition: 0.4s;
+                    }
+                }
+
+                // background-color: red;
+
+                &:hover {
+                    &::after {
+                        visibility: visible;
+                        transition: 0.5s;
+                        filter: blur(8px);
+                        transform: translateX(-20px) translateY(-20px) scale(2);
+                    }
+                }
+
+                .col-1 {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    svg {
+                        width: 3rem;
+                        height: 3rem;
+                        animation: vibration 1.5s ease infinite;
+                    }
+                }
+
+                .col-11 {
+                    h3 {
+                        font-family: "Varela Round", sans-serif;
+                        font-weight: 900;
+                        margin-bottom: 10px;
+                    }
+
+                    a {
+                        color: black;
+                        font-family: "Varela Round", sans-serif;
+                        font-size: large;
+                        text-decoration: none;
+
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@keyframes vibration {
+
+    10%,
+    20% {
+        transform: scale3d(.95, .95, .95) rotate3d(0, 0, 1, -10deg);
+    }
+
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 10deg);
+    }
+
+    40%,
+    60%,
+    80% {
+        transform: rotate3d(0, 0, 1, -10deg);
+    }
+
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}

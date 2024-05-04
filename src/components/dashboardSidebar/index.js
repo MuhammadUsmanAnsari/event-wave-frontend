@@ -5,6 +5,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import './_dashboardSidebar.scss';
 import { useAuthContext } from 'context/AuthContext';
@@ -43,6 +44,23 @@ export default function Index({ collapsed }) {
                 }
             ]
         },
+        {
+            icon: <BookOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+            label: "Blogs",
+            key: "/dashboard/blogs",
+            children: [
+                {
+                    icon: <AddOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+                    label: "Add Blog",
+                    key: "/dashboard/blogs/add"
+                },
+                {
+                    icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+                    label: "My Blogs",
+                    key: "/dashboard/blogs/myBlogs"
+                }
+            ]
+        },
     ];
 
     const menuItemsAttandee = [
@@ -68,6 +86,23 @@ export default function Index({ collapsed }) {
             icon: <CelebrationOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
             label: "Added Events",
             key: "/dashboard/admin/events"
+        },
+        {
+            icon: <BookOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+            label: "Blogs",
+            key: "/dashboard/blogs",
+            children: [
+                {
+                    icon: <AddOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+                    label: "Add Blog",
+                    key: "/dashboard/blogs/add"
+                },
+                {
+                    icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+                    label: "My Blogs",
+                    key: "/dashboard/blogs/myBlogs"
+                }
+            ]
         },
     ];
 

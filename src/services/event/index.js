@@ -50,3 +50,12 @@ export const rejectEvent = (id, reason) => {
 export const publishEventByAdmin = (id) => {
     return put(`${root}/api/v1/event/publishEventByAdmin?id=${id}`);
 };
+export const getUpcomingEvents = (page) => {
+    return get(`${root}/api/v1/event/upcoming?limit=20&page=${page}`);
+};
+export const getEventsUsingCategory = (page, category) => {
+    return get(`${root}/api/v1/event/category?category=${category}&limit=20&page=${page}`);
+};
+export const getGalleryImages = (more) => {
+    return get(`${root}/api/v1/event/gallery?more=${more}`);
+};

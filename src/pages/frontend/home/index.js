@@ -9,7 +9,7 @@ import HappyCustomers from './HappyCustomers'
 import Speakers from './Guests'
 import Testimonial from './Testimonial'
 import Blogs from 'components/blogs'
-import Newsletter from 'components/NewsLetter'
+import Newsletter from 'components/Feedbacks'
 import Services from './Services'
 
 export default function Index() {

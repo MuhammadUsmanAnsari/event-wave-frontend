@@ -9,6 +9,11 @@ $warning: #f5a998;
                     .nav-link {
                         font-family: "Baloo Bhaijaan 2", sans-serif;
                     }
+
+                    .nav-link.active {
+                        color: $warning;
+                        font-weight: bold;
+                    }
                 }
             }
         }
@@ -60,9 +65,10 @@ $warning: #f5a998;
         width: 100%;
         display: flex;
         align-items: center;
-        
+
         span {
             display: flex;
+
             &:nth-child(1) {
                 padding-right: 10px;
             }

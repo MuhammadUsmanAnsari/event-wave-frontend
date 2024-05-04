@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './_navbar.scss'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useAuthContext } from 'context/AuthContext'
 import { Avatar, Button, Popover } from 'antd'
 import { UserOutlined } from '@ant-design/icons';
@@ -42,13 +42,13 @@ export default function Index() {
                     <div className="collapse navbar-collapse pb-3 pb-lg-0" id="navbarSupportedContent">
                         <ul className="navbar-nav ms-auto me-3 mb-2 mb-lg-0">
                             <li className="nav-item mx-2">
-                                <Link className="nav-link active" aria-current="page" to="/">Home</Link>
+                                <NavLink className="nav-link" aria-current="page" to="/">Home</NavLink>
                             </li>
                             <li className="nav-item mx-2">
-                                <Link className="nav-link" to="/about">About</Link>
+                                <NavLink className="nav-link" to="/about">About</NavLink>
                             </li>
                             <li className="nav-item mx-2">
-                                <a className="nav-link" href="#">Upcoming</a>
+                                <NavLink className="nav-link" to="/upcoming">Upcoming</NavLink>
                             </li>
                             <li className="nav-item mx-2 dropdown" onMouseOver={() => setDropdownOpen(true)} onMouseLeave={() => setDropdownOpen(false)}>
                                 <a className={`nav-link dropdown-toggle ${dropdownOpen ? "show" : ""}`} href="#" role="button" data-bs-toggle="dropdown" aria-expanded={dropdownOpen ? "true" : "false"}>
@@ -56,18 +56,18 @@ export default function Index() {
                                 </a>
                                 <ul className={`dropdown-menu pt-0 rounded-0 border-0 shadow ${dropdownOpen ? "show" : ""}`} data-bs-popper="static">
                                     {window?.categories?.map((item, i) => {
-                                        return <li key={i}><a className="dropdown-item" href="#">{item}</a></li>
+                                        return <li key={i}><Link className="dropdown-item" to={`/events/${item}`}>{item}</Link></li>
                                     })}
                                 </ul>
                             </li>
                             <li className="nav-item mx-2">
-                                <a className="nav-link" aria-disabled="true">Gallery</a>
+                                <NavLink className="nav-link" to={'/gallery'}>Gallery</NavLink>
                             </li>
                             <li className="nav-item mx-2">
-                                <a className="nav-link" aria-disabled="true">Blogs</a>
+                                <a className="nav-link">Blogs</a>
                             </li>
                             <li className="nav-item mx-2">
-                                <a className="nav-link" aria-disabled="true">Contact</a>
+                                <NavLink className="nav-link" to={`/contact`}>Contact</NavLink>
                             </li>
                         </ul>
                         <div >

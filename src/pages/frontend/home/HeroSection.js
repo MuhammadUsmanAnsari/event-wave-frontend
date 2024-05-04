@@ -1,10 +1,10 @@
 import { Carousel } from 'antd';
-import { useAuthContext } from 'context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 export default function HeroSection() {
-    const { isAuthenticated, user } = useAuthContext();
+    const navigate = useNavigate();
+
     return (
         <>
             <div id='hero-section'>
@@ -22,7 +22,7 @@ export default function HeroSection() {
                                         </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
-                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
+                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button" onClick={() => navigate('/upcoming')}>
                                             <span class="text">Get Started</span>
                                             <span>Let's Start</span>
                                         </button>
@@ -44,7 +44,7 @@ export default function HeroSection() {
                                         </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
-                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
+                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button" onClick={() => navigate('/upcoming')}>
                                             <span class="text">Get Started</span>
                                             <span>Let's Start</span>
                                         </button>
@@ -66,7 +66,7 @@ export default function HeroSection() {
                                         </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
-                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
+                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button" onClick={() => navigate('/upcoming')}>
                                             <span class="text">Get Started</span>
                                             <span>Let's Start</span>
                                         </button>
@@ -88,7 +88,7 @@ export default function HeroSection() {
                                         </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
-                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
+                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button" onClick={() => navigate('/upcoming')}>
                                             <span class="text">Get Started</span>
                                             <span>Let's Start</span>
                                         </button>
@@ -110,7 +110,7 @@ export default function HeroSection() {
                                         </Link>
                                     </div>
                                     <div className="col text-center text-sm-start mt-3 mt-sm-0">
-                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button">
+                                        <button class="button-stylling-outline px-5 py-3 rounded bg-transparent" role="button" onClick={() => navigate('/upcoming')}>
                                             <span class="text">Get Started</span>
                                             <span>Let's Start</span>
                                         </button>
