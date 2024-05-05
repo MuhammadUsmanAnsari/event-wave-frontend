@@ -5,11 +5,39 @@ import LocationOnTwoToneIcon from '@mui/icons-material/LocationOnTwoTone';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import LocalPhoneTwoToneIcon from '@mui/icons-material/LocalPhoneTwoTone';
 import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { getTopLatestBlogs } from 'services/blogs';
 
 
 
-export default function index() {
+export default function Index() {
     const year = moment().year()
+    const [blogs, setBlogs] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+
+
+    useEffect(() => {
+        getBlogs();
+    }, [])
+
+    const getBlogs = async () => {
+        try {
+            let { data } = await getTopLatestBlogs();
+            setBlogs(data?.data)
+        } catch (error) {
+            console.log(error);
+            let msg = "Some error occured";
+            let { status, data } = error.response;
+            if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
+                msg = data.message || data.msg;
+                setBlogs([])
+                window.toastify(msg, "error");
+            }
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <>
             <div className="bg-dark text-light" id='footer'>
@@ -87,38 +115,25 @@ export default function index() {
                         </div>
                         <div className="col mt-5 mt-md-4 mt-lg-0">
                             <h4 className='mb-3 fw-bold text-warning'>Recent Blogs</h4>
-                            {/* <p>Don't miss our feature update</p>
-                            <div className="input-group ">
-                                <input type="email" className="form-control shadow-none rounded-start-pill py-3" placeholder="Enter you email" aria-label="Recipient's username" aria-describedby="basic-addon2" />
-                                <button className="input-group-text btn btn-info d-flex align-items-center px-3" id="basic-addon2">
-                                    <box-icon name='send' animation='flashing'></box-icon>
-                                </button>
-                            </div> */}
-                            <div className="row g-0">
-                                <div className="col-3">
-                                    <img src="https://w7.pngwing.com/pngs/313/180/png-transparent-rock-concert-music-festival-rock-music-others-stage-performance-computer-wallpaper-thumbnail.png" style={{ width: 50, height: 50 }} alt="..." />
-                                </div>
-                                <div className="col">
-                                    <p class="card-title">Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
-                                    <div>
-                                        <span><i class='bx bx-calendar text-secondary me-1'></i></span>
-                                        <span style={{ fontSize: "small" }} className='text-secondary'>2024-02-12</span>
-                                    </div>
-                                </div>
-                            </div><hr />
-                            <div className="row g-0">
-                                <div className="col-3">
-                                    <img src="https://w7.pngwing.com/pngs/313/180/png-transparent-rock-concert-music-festival-rock-music-others-stage-performance-computer-wallpaper-thumbnail.png" style={{ width: 50, height: 50 }} alt="..." />
-                                </div>
-                                <div className="col">
-                                    <p class="card-title">Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
-                                    <div>
-                                        <span><i class='bx bx-calendar text-secondary me-1'></i></span>
-                                        <span style={{ fontSize: "small" }} className='text-secondary'>2024-02-12</span>
-                                    </div>
-                                </div>
-                            </div><hr />
+                            {
+                                blogs?.map((item, i) => {
+                                    return <>
+                                        <Link to={`/blog/details/${item?._id}`} className="row text-decoration-none text-light g-0" key={i}>
+                                            <div className="col-3">
+                                                <img src={item?.image} style={{ width: 50, height: 50 }} alt="..." />
+                                            </div>
+                                            <div className="col">
+                                                <p class="card-title">{item?.title?.length > 30 ? item?.title?.substring(0, 30) + "..." : item?.title}</p>
+                                                <div>
+                                                    <span><i class='bx bx-calendar text-secondary me-1'></i></span>
+                                                    <span style={{ fontSize: "small" }} className='text-secondary'>{moment(item?.createdAt).format('YYYY-MM-DD')}</span>
+                                                </div>
+                                            </div>
+                                        </Link><hr />
 
+                                    </>
+                                })
+                            }
                         </div>
                         <div className="col mt-5 mt-md-4 mt-lg-0">
                             <h4 className='mb-3 fw-bold text-warning'>Contact</h4>

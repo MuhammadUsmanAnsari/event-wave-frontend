@@ -8,8 +8,8 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { useNavigate } from 'react-router-dom';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
-import ViewEvent from './ViewEvent';
-import { getMyBlogs } from 'services/blogs';
+import ViewBlog from './ViewBlog';
+import { getMyBlogs, delBlog, updateBlog } from 'services/blogs';
 
 
 export default function MyBlogs() {
@@ -19,8 +19,7 @@ export default function MyBlogs() {
     const [isLoading, setIsLoading] = useState(false);
     const [statusLoading, setStatusLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const [openCancelModal, setOpenCancelModal] = useState(false);
-    const [modalEventId, setModalEventId] = useState("");
+    const [modalBlogId, setModalBlogId] = useState("");
     const searchInput = useRef(null);
     const navigate = useNavigate();
 
@@ -160,7 +159,7 @@ export default function MyBlogs() {
             dataIndex: 'category',
             key: 'category',
             ...getColumnSearchProps('category'),
-        },        
+        },
         {
             title: 'Views',
             dataIndex: 'views',
@@ -188,10 +187,10 @@ export default function MyBlogs() {
             key: 'actions',
             render: (_, record) => (
                 <div className='d-flex justify-content-evenly align-items-center'>
-                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
+                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Deleted" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
                     <Button type='dashed' onClick={() => {
                         setOpenModal(true)
-                        setModalEventId(record?._id)
+                        setModalBlogId(record?._id)
                     }}
                         className='ms-1 d-flex align-items-center justify-content-center'>
                         <VisibilityTwoToneIcon fontSize='small' />
@@ -205,7 +204,7 @@ export default function MyBlogs() {
                     <Space size="middle" className='ms-1'>
                         <Popconfirm
                             title="Delete the event"
-                            description="Are you sure you want to delete this event? This action will cancel the event for all attendees."
+                            description="Are you sure you want to delete this blog?"
                             icon={
                                 <QuestionCircleOutlined
                                     style={{
@@ -246,7 +245,7 @@ export default function MyBlogs() {
 
         setStatusLoading(true)
         try {
-            let { data } = await updateEvent(record?._id, { status });
+            let { data } = await updateBlog(record?._id, { status });
             window.toastify(data?.msg, "success");
         } catch (error) {
             console.log(error);
@@ -264,7 +263,7 @@ export default function MyBlogs() {
 
     const handleDelEvent = async (record) => {
         try {
-            let { data } = await delEvent(record?._id);
+            let { data } = await delBlog(record?._id);
             getBlogs()
             window.toastify(data?.msg, "success");
         } catch (error) {
@@ -298,10 +297,10 @@ export default function MyBlogs() {
             </div>
             <div className="row">
                 <div className="col">
-                    {openModal && <ViewEvent open={openModal} setOpen={setOpenModal} id={modalEventId} />}
+                    {openModal && <ViewBlog open={openModal} setOpen={setOpenModal} id={modalBlogId} />}
                 </div>
             </div>
-        
+
         </div>
     )
 }

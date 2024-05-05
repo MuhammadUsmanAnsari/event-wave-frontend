@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from 'pages/frontend/home'
 import About from 'pages/frontend/about'
 import EventDetails from 'pages/frontend/eventDetails'
+import BlogDetails from 'pages/frontend/blogDetails'
 import PrivateRoute from 'components/privateRoute/PrivateRoute'
 import SpeakersEvents from 'pages/frontend/guestsEvents'
 import UserProfile from 'pages/frontend/userDetails/Routes'
@@ -23,6 +24,7 @@ export default function index() {
         <Route path='speaker/:name' element={<PrivateRoute Component={SpeakersEvents} />} />
         <Route path='user/:id/*' element={<PrivateRoute Component={UserProfile} />} />
         <Route path='event/details/:id' element={<PrivateRoute Component={EventDetails} />} />
+        <Route path='blog/details/:id' element={<PrivateRoute Component={BlogDetails} />} />
       </Routes>
 
     </>
