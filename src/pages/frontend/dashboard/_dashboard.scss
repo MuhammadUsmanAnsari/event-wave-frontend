@@ -87,10 +87,28 @@ $warning: #f5a998;
     position: relative;
 }
 
+// activities page
+#activities-dashboard-section {
+    transform: translateY(-120px);
+    z-index: 4;
+    top: 0;
+    position: relative;
+   
+}
+
 @media only screen and (max-width: 992px) {
 
     // overview page
     #overview-dashboard-section {
+        transform: translateY(-110px);
+        z-index: 4;
+        // width: 100%;
+        top: 0;
+        position: relative;
+
+    }
+
+    #activities-dashboard-section {
         transform: translateY(-110px);
         z-index: 4;
         // width: 100%;
@@ -143,6 +161,11 @@ $warning: #f5a998;
 
     // overview page
     #overview-dashboard-section {
+        transform: translateY(-75px);
+    }
+
+    // overview page
+    #activies-dashboard-section {
         transform: translateY(-75px);
     }
 }

@@ -40,6 +40,12 @@ export const addComment = (id, body) => {
 export const deleteComment = (id) => {
     return del(`${root}/api/v1/blog/comment?id=${id}`);
 };
+export const getMyLikedBlogs = () => {
+    return get(`${root}/api/v1/blog/getMyLikedBlogs`);
+};
+export const getMyBlogComments = () => {
+    return get(`${root}/api/v1/blog/getMyBlogComments`);
+};
 
 // conatact page
 export const sendContactMsg = (body) => {
