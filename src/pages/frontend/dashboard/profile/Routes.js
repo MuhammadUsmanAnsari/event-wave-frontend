@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Overview from 'pages/frontend/dashboard/profile/Overview';
 import Activities from './Activities';
+import Events from './Events';
 import ProfileHeader from './ProfileHeader';
 import { getUser } from 'services/auth';
 import LoadingIndicator from 'components/LoadingIndicator';
@@ -40,6 +41,7 @@ export default function Index() {
             <Routes>
                 <Route path='/' element={<Overview userData={userData} />} />
                 <Route path='activities' element={<Activities />} />
+                <Route path='events' element={<Events />} />
             </Routes>
         </>
     )

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Route, Routes, useParams } from 'react-router-dom'
 import Overview from 'pages/frontend/userDetails/Overview';
-import Activities from './Activities';
+import Events from './Events';
 import ProfileHeader from './ProfileHeader';
 import { getUserWithId } from 'services/auth';
 import LoadingIndicator from 'components/LoadingIndicator';
@@ -44,7 +44,7 @@ export default function Index() {
             <ProfileHeader userData={userData} getData={getData} />
             <Routes>
                 <Route path='/' element={<Overview userData={userData} />} />
-                <Route path='activities' element={<Activities />} />
+                <Route path='events' element={<Events userData={userData} />} />
             </Routes>
             <Footer />
         </>

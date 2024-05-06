@@ -45,6 +45,15 @@ export const getMyLikedEvents = () => {
 export const getMyEventComments = () => {
     return get(`${root}/api/v1/event/getMyEventComments`);
 };
+export const getMyUpcomingEvents = () => {
+    return get(`${root}/api/v1/event/getMyUpcomingEvents`);
+};
+export const getMyPastEvents = () => {
+    return get(`${root}/api/v1/event/getMyPastEvents`);
+};
+export const getOrganizerEventsUsingCategory = (category, organizerId) => {
+    return get(`${root}/api/v1/event/organizer-events-using-category?category=${category}&organizerId=${organizerId}`);
+};
 
 
 // admin

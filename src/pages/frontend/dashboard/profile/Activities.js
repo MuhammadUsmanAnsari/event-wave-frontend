@@ -1,4 +1,4 @@
-import { Avatar, Image, Skeleton } from 'antd';
+import { Avatar, Skeleton } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';

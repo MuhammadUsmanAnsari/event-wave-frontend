@@ -78,6 +78,80 @@ $warning: #f5a998;
     position: relative;
 }
 
+// organizerEvents-section  
+#organizerEvents-section {
+    .card {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+        .row {
+            .col {
+                .card {
+                    position: relative;
+
+                    .card-img {
+                        height: 200px;
+                        overflow: hidden;
+                        border-radius: 0px;
+                        position: relative;
+
+                        img {
+                            transition: all 0.4s ease;
+                            height: 100%;
+                        }
+
+                        .seats {
+                            position: absolute;
+                            bottom: 0;
+                            border-radius: 0 10px 0 0;
+                            font-weight: bold;
+                            font-size: large;
+                            // opacity: 0;
+                            transform: translateY(90px);
+                            z-index: 2;
+                            transition: all 0.3s ease;
+
+
+                        }
+                    }
+
+                    .card-body {
+                        .card-title {
+                            a {
+                                color: #000;
+                                text-decoration: none;
+
+                                &:hover {
+                                    color: $info;
+                                }
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        .card-img {
+                            img {
+                                transition: all 0.4s ease;
+                                transform: scale(1.1) rotate(3deg);
+                            }
+
+                            .seats {
+                                transition: all 0.3s ease;
+                                transform: translateY(0px);
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
 @media only screen and (max-width: 992px) {
 
     // overview page
@@ -137,4 +211,51 @@ $warning: #f5a998;
 
         transform: translateY(-39px);
     }
+
+    // organizerEvents-section  
+    #organizerEvents-section {
+        .card:nth-child(1) {
+            box-shadow: none !important;
+
+            .row {
+                .col {
+                    .card {
+                        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+
+@media only screen and (max-width: 576px) {
+    #organizerEvents-section {
+        .row {
+            .col {
+                .card {
+                    .card-img {
+                        // height: 150px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    #organizerEvents-section {
+        .row {
+            .col {
+                .card {
+                    .card-img {
+                        height: 150px;
+                    }
+                }
+            }
+        }
+    }
+
 }

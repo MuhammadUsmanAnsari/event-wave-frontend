@@ -19,12 +19,8 @@ export default function ProfileHeader({ userData, getData }) {
             key: `user/${userData?._id}`,
         },
         {
-            label: 'Activities',
-            key: `user/${userData?._id}/activities`,
-        },
-        {
-            label: 'Events',
-            key: 'user/profile/events',
+            label: 'All Events',
+            key: `user/${userData?._id}/events`,
         },
     ];
 
