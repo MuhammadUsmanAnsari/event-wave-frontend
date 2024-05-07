@@ -5,7 +5,7 @@ import moment from 'moment';
 import noData from 'assets/gifs/noData.gif';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import { Pagination } from 'antd';
+import { Pagination, Skeleton } from 'antd';
 
 export default function Upcoming({ events, isLoading, setPage, count }) {
 
@@ -29,13 +29,22 @@ export default function Upcoming({ events, isLoading, setPage, count }) {
         <>
             <div className="container my-5 py-5">
                 {isLoading
-                    ? <div className="row">
+                    ? <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 mb-3 mb-md-4" >
                         <div className="col">
-                            <div className='my-5 text-center'>
-                                <div className="spinner-grow bg-info"></div>
-                                <div className="spinner-grow bg-warning mx-3"></div>
-                                <div className="spinner-grow bg-info"></div>
-                            </div>
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
                         </div>
                     </div>
                     : <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 mb-3 mb-md-4" id='events-card-row'>

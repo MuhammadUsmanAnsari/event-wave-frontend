@@ -3,8 +3,8 @@ import Footer from 'components/Footer'
 import Banner from 'components/background/Banner'
 import React, { useEffect } from 'react'
 import Testimonial from '../home/Testimonial'
-import Contact from './Contact'
-import './_contact.scss'
+import Blogs from './Blogs'
+import './_blog.scss'
 
 export default function Index() {
     useEffect(() => {
@@ -13,8 +13,8 @@ export default function Index() {
     return (
         <>
             <Navbar />
-            <Banner title={"ALL YOU NEED TO KNOW"} pageTitle={`Contact With Us`} page={"Contact"} />
-            <Contact />
+            <Banner title={"ALL YOU NEED TO KNOW"} pageTitle={`Read Our Blogs`} page={"Blogs"} />
+            <Blogs />
             <Testimonial />
             <Footer />
         </>

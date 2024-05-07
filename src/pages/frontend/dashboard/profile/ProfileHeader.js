@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Menu } from 'antd';
+import { Avatar, Button, Menu, Popover } from 'antd';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
 import { useNavigate } from 'react-router-dom';
+import FollowerListModel from 'components/followersListModel';
 
-export default function ProfileHeader({ userData }) {
+export default function ProfileHeader({ userData, loading }) {
     const [current, setCurrent] = useState('dashboard/profile');
     const navigate = useNavigate();
 
@@ -43,7 +44,6 @@ export default function ProfileHeader({ userData }) {
         }
         return num.toString();
     };
-
     return (
         <div className="container-fluid bg-info" id='profile-section-dashboard'>
             <div className='container-fluid top-banner'>
@@ -75,12 +75,20 @@ export default function ProfileHeader({ userData }) {
                         </div>
                         <div className="col d-flex text-center justify-content-end">
                             <div>
-                                <h5>{formatNumber(userData?.followers?.length)}</h5>
-                                <small className='text-white-50'>Followers</small>
+                                <Popover placement="bottom" autoAdjustOverflow title={"Followers"} content={<FollowerListModel data={userData?.followers} loading={loading} />}>
+                                    <button className='btn btn-link bg-transparent p-0 text-decoration-none text-light'>
+                                        <h5>{formatNumber(userData?.followers?.length)}</h5>
+                                        <small className='text-white-50'>Followers</small>
+                                    </button>
+                                </Popover>
                             </div>
                             <div className='ms-4'>
-                                <h5>{formatNumber(userData?.following?.length)}</h5>
-                                <small className='text-white-50'>Following</small>
+                                <Popover placement="bottom" autoAdjustOverflow title={"Following"} content={<FollowerListModel data={userData?.following} loading={loading} />}>
+                                    <button className='btn btn-link bg-transparent p-0 text-decoration-none text-light'>
+                                        <h5>{formatNumber(userData?.following?.length)}</h5>
+                                        <small className='text-white-50'>Following</small>
+                                    </button>
+                                </Popover>
                             </div>
                         </div>
                     </div>

@@ -37,7 +37,7 @@ export default function Index() {
         <>
             <LoadingIndicator loading={loading} />
 
-            <ProfileHeader userData={userData} />
+            <ProfileHeader userData={userData} loading={loading} />
             <Routes>
                 <Route path='/' element={<Overview userData={userData} />} />
                 <Route path='activities' element={<Activities />} />

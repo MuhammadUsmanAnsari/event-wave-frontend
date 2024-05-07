@@ -46,9 +46,9 @@ export default function Index() {
                     {blogs?.slice(0, 8)?.map((item, i) => {
                         return <div className="col" key={i}>
                             <div class="card rounded-3 overflow-hidden border-0">
-                                <div className="card-img">
-                                    <img src={item?.image} class="card-img-top" alt="..." />
-                                </div>
+                                <Link className="card-img" to={`/blog/details/${item?._id}`}>
+                                    <img src={item?.image} class="card-img-top" alt="blog_image" />
+                                </Link>
                                 <div class="card-body">
                                     <p>
                                         <span><i class='bx bx-calendar text-warning me-1'></i></span>

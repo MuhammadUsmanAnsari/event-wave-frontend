@@ -64,7 +64,7 @@ export default function Navbar() {
                                 <NavLink className="nav-link" to={'/gallery'}>Gallery</NavLink>
                             </li>
                             <li className="nav-item mx-2">
-                                <NavLink className="nav-link" to={''}>Blogs</NavLink>
+                                <NavLink className="nav-link" to={'/blogs'}>Blogs</NavLink>
                             </li>
                             <li className="nav-item mx-2">
                                 <NavLink className="nav-link" to={'/contact'}>Contact</NavLink>

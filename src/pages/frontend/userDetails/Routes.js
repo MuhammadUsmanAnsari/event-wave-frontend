@@ -41,7 +41,7 @@ export default function Index() {
         <>
             <LoadingIndicator loading={loading} />
             <Navbar />
-            <ProfileHeader userData={userData} getData={getData} />
+            <ProfileHeader userData={userData} getData={getData} loading={loading} />
             <Routes>
                 <Route path='/' element={<Overview userData={userData} />} />
                 <Route path='events' element={<Events userData={userData} />} />

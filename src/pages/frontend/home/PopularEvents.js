@@ -8,6 +8,7 @@ import seats from 'assets/pictures/seats.png';
 import noData from 'assets/gifs/noData.gif';
 import { getPopularEvents } from 'services/event';
 import moment from 'moment'
+import { Skeleton } from 'antd';
 
 export default function PopularEvents() {
     const [selectedTab, setSelectedTab] = useState("Business")
@@ -47,7 +48,7 @@ export default function PopularEvents() {
         const contentToCopy = `https://eventwawe.vercel.app/event/details/${id}`
         navigator.clipboard.writeText(contentToCopy)
             .then(() => {
-                window.toastify("Link copied to clipboard.", "success");            
+                window.toastify("Link copied to clipboard.", "success");
             })
             .catch((error) => {
                 window.toastify(error?.message, "error");
@@ -93,13 +94,18 @@ export default function PopularEvents() {
                 </div>
             </div>
             {isLoading
-                ? <div className="row">
+                ? <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ">
                     <div className="col">
-                        <div className='my-5 text-center'>
-                            <div className="spinner-grow bg-info"></div>
-                            <div className="spinner-grow bg-warning mx-3"></div>
-                            <div className="spinner-grow bg-info"></div>
-                        </div>
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
+                    </div>
+                    <div className="col">
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
+                    </div>
+                    <div className="col">
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
                     </div>
                 </div>
                 : <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ">

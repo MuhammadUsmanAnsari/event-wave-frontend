@@ -64,7 +64,7 @@ export default function Index() {
                                 <NavLink className="nav-link" to={'/gallery'}>Gallery</NavLink>
                             </li>
                             <li className="nav-item mx-2">
-                                <a className="nav-link">Blogs</a>
+                                <NavLink className="nav-link" to={'/blogs'}>Blogs</NavLink>
                             </li>
                             <li className="nav-item mx-2">
                                 <NavLink className="nav-link" to={`/contact`}>Contact</NavLink>

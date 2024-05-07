@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Menu } from 'antd';
+import { Avatar, Menu, Popover } from 'antd';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
 import { useNavigate } from 'react-router-dom';
 import { followUser } from 'services/auth';
 import { useAuthContext } from 'context/AuthContext';
+import FollowerListModel from 'components/followersListModel';
 
-export default function ProfileHeader({ userData, getData }) {
+export default function ProfileHeader({ userData, getData, loading }) {
     const [current, setCurrent] = useState(`user/${userData?._id}`);
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuthContext()
@@ -23,9 +24,16 @@ export default function ProfileHeader({ userData, getData }) {
             key: `user/${userData?._id}/events`,
         },
     ];
+    const itemsAttendee = [
+        {
+            label: 'Overview',
+            key: `user/${userData?._id}`,
+        },
+    ];
 
     useEffect(() => {
         setCurrent(window.location.pathname.substring(1))
+        getData()
     }, [current, window.location.pathname])
 
     const onClick = (e) => {
@@ -95,25 +103,33 @@ export default function ProfileHeader({ userData, getData }) {
                         </div>
                         <div className="col d-flex text-center justify-content-end">
                             <div>
-                                <h5>{formatNumber(userData?.followers?.length)}</h5>
-                                <small className='text-white-50'>Followers</small>
+                                <Popover placement="bottom" autoAdjustOverflow title={"Followers"} content={<FollowerListModel data={userData?.followers} loading={loading} />}>
+                                    <button className='btn btn-link bg-transparent p-0 text-decoration-none text-light'>
+                                        <h5>{formatNumber(userData?.followers?.length)}</h5>
+                                        <small className='text-white-50'>Followers</small>
+                                    </button>
+                                </Popover>
                             </div>
                             <div className='ms-4'>
-                                <h5>{formatNumber(userData?.following?.length)}</h5>
-                                <small className='text-white-50'>Following</small>
+                                <Popover placement="bottom" autoAdjustOverflow title={"Following"} content={<FollowerListModel data={userData?.following} loading={loading} />}>
+                                    <button className='btn btn-link bg-transparent p-0 text-decoration-none text-light'>
+                                        <h5>{formatNumber(userData?.following?.length)}</h5>
+                                        <small className='text-white-50'>Following</small>
+                                    </button>
+                                </Popover>
                             </div>
                         </div>
                     </div>
                     <div className="row mb-4">
                         <div className="col-7 col-md-10">
-                            <Menu selectedKeys={[current]} onClick={onClick} style={{ background: "transparent" }} mode="horizontal" items={items} />
+                            <Menu selectedKeys={[current]} onClick={onClick} style={{ background: "transparent" }} mode="horizontal" items={userData?.role === "organizer" ? items : itemsAttendee} />
                         </div>
                         <div className="col-5 col-md-2 d-flex justify-content-end">
                             <button className='button-stylling-1 px-4 px-md-5 btn-sm' disabled={isLoading} onClick={handleFollow}>
                                 {isLoading
                                     ? <div className='spinner-border spinner-border-sm'></div>
                                     : <small>
-                                        {userData?.followers?.some(item => item === user?._id)
+                                        {userData?.followers?.some(item => item?._id == user?._id)
                                             ? "Following"
                                             : "Follow"}
                                     </small>

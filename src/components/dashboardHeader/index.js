@@ -23,9 +23,6 @@ export default function Index({ collapsed, setCollapsed }) {
                                 : <MenuIcon />
                             }
                         </button>
-                        <span className='d-none d-sm-inline'>
-                            <Input size="large" variant='filled' placeholder="Search ..." prefix={<SearchOutlinedIcon className='text-secondary' />} />
-                        </span>
                     </li>
                     <li class="nav-item me-3">
                         <a class="nav-link text-secondary"><NotificationsNoneOutlinedIcon /></a>

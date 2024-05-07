@@ -89,27 +89,27 @@ export default function Index() {
                                 </Link>
                             </div>
                             <div>
-                                <Link>
+                                <Link to={'/upcoming'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
                                     Events
                                 </Link>
                             </div>
                             <div>
-                                <Link>
+                                <Link to={'/gallery'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
                                     Gallery
                                 </Link>
                             </div>
                             <div>
-                                <Link>
+                                <Link to={'/blogs'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
-                                    Speakers
+                                    Blogs
                                 </Link>
                             </div>
                             <div>
-                                <Link>
+                                <Link to={'/contact'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
-                                    Blogs
+                                    Contact
                                 </Link>
                             </div>
                         </div>

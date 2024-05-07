@@ -145,166 +145,173 @@ export default function Index() {
                                                     <h5 className='mt-4 text-warning '>Sorry, the event you are trying to access is not available. The event organizer cancelled the event.</h5>
                                                 </div>
                                             </div>
-                                            :
-                                            <>
-                                                <div>
-                                                    <img
-                                                        className='img-fluid rounded'
-                                                        width={'100%'}
-                                                        src={event?.image}
-                                                    />
-                                                </div>
-                                                <div className="d-flex justify-content-between align-items-center my-4">
-                                                    <div style={{ width: "50%" }}>
-                                                        <i class='bx bx-calendar text-warning me-1'></i> <small>{moment(event?.date).format('MMM D, YYYY')}</small>
+                                            : event?.status === "Pending"
+                                                ? <div className="row">
+                                                    <div className='col my-4 text-center'>
+                                                        <img src={noData} alt="no data found" className='img-fluid' />
+                                                        <h5 className='mt-4 text-warning '>Sorry, the event you are trying to access is not available. This event is not published from admin.</h5>
                                                     </div>
-                                                    {/* <div style={{ width: "33%" }} className="seats d-flex align-items-center justify-content-center flex-column flex-sm-row">
+                                                </div>
+                                                :
+                                                <>
+                                                    <div>
+                                                        <img
+                                                            className='img-fluid rounded'
+                                                            width={'100%'}
+                                                            src={event?.image}
+                                                        />
+                                                    </div>
+                                                    <div className="d-flex justify-content-between align-items-center my-4">
+                                                        <div style={{ width: "50%" }}>
+                                                            <i class='bx bx-calendar text-warning me-1'></i> <small>{moment(event?.date).format('MMM D, YYYY')}</small>
+                                                        </div>
+                                                        {/* <div style={{ width: "33%" }} className="seats d-flex align-items-center justify-content-center flex-column flex-sm-row">
                                 <img src={seats} style={{ width: 25 }} className='me-0 me-sm-2' alt="" />
                                 <span>{event?.seats - event?.seatsBooked?.length} Seat</span>
                             </div> */}
-                                                    <div style={{ width: "50%", textAlign: 'end' }}>
-                                                        <LocationOnOutlinedIcon fontSize='small' className='text-warning me-1' />
-                                                        <small>{event?.country}, {event?.city}</small>
-                                                    </div>
-                                                </div><hr />
-                                                {/* event popularity */}
-                                                <div className="d-flex justify-content-between my-4">
-                                                    <button style={{ width: "33%" }} className='btn btn-light d-flex justify-content-center flex-column flex-sm-row align-items-center'><VisibilityTwoToneIcon className='text-secondary' fontSize='small' /> <small className='ms-2'>{formatNumber(event?.views?.length)} Views</small></button>
-                                                    <button style={{ width: "33%" }} className='btn btn-light d-flex justify-content-center flex-column flex-sm-row align-items-center' onClick={handleLikeEvent}>
-                                                        {event?.likes?.some(item => item === user?._id)
-                                                            ? <FavoriteIcon className='text-danger' fontSize='small' />
-                                                            : <FavoriteTwoToneIcon className='text-danger' fontSize='small' />
+                                                        <div style={{ width: "50%", textAlign: 'end' }}>
+                                                            <LocationOnOutlinedIcon fontSize='small' className='text-warning me-1' />
+                                                            <small>{event?.country}, {event?.city}</small>
+                                                        </div>
+                                                    </div><hr />
+                                                    {/* event popularity */}
+                                                    <div className="d-flex justify-content-between my-4">
+                                                        <button style={{ width: "33%" }} className='btn btn-light d-flex justify-content-center flex-column flex-sm-row align-items-center'><VisibilityTwoToneIcon className='text-secondary' fontSize='small' /> <small className='ms-2'>{formatNumber(event?.views?.length)} Views</small></button>
+                                                        <button style={{ width: "33%" }} className='btn btn-light d-flex justify-content-center flex-column flex-sm-row align-items-center' onClick={handleLikeEvent}>
+                                                            {event?.likes?.some(item => item === user?._id)
+                                                                ? <FavoriteIcon className='text-danger' fontSize='small' />
+                                                                : <FavoriteTwoToneIcon className='text-danger' fontSize='small' />
+                                                            }
+
+                                                            <small className='ms-2'>{formatNumber(event?.likes?.length)} Likes</small>
+                                                        </button>
+                                                        <button style={{ width: "33%" }} onClick={() => commentRef.current.scrollIntoView({ behavior: 'smooth' })} className='btn btn-light d-flex justify-content-center flex-column flex-sm-row align-items-center'><ChatBubbleTwoToneIcon className='text-primary' fontSize='small' /> <small className='ms-2'>{formatNumber(event?.comments?.length)} Comments</small></button>
+                                                    </div><hr />
+                                                    {/* title */}
+                                                    <div>
+                                                        <h3 className='mt-4 fw-bold'>{event?.title}</h3>
+                                                        <div className='d-flex justify-content-between'>
+                                                            <h6 className='text-warning mt-3 mb-5'><span className="text-dark">Seats Left: </span> {event?.seats - bookedSeats}</h6>
+                                                            <h6 className='text-warning mt-3 mb-5 text-end'><span className="text-dark">Ticket Price: </span> Rs. {event?.ticketPrice}</h6>
+                                                        </div>
+
+                                                        {/* time range */}
+                                                        <div>
+                                                            <h5><u>Time Range</u></h5>
+                                                            <div className="row border rounded border-info text-center p-2 mx-1 mx-sm-3 mt-3">
+                                                                <div className="col" >{event?.time ? event?.time[0] : ""}</div>
+                                                                <div className="col" ><i class='bx bx-right-arrow-alt bx-fade-left fs-4 text-info' ></i></div>
+                                                                <div className="col" >{event?.time ? event?.time[1] : ""}</div>
+                                                            </div>
+                                                        </div>
+                                                        {/* created date */}
+                                                        <>
+                                                            <h5 className='mt-5'><u>Event creation date</u></h5>
+                                                            <p>{moment(event?.createdAt).format('MMM D, YYYY')}</p>
+                                                        </>
+
+                                                        {/* category */}
+                                                        {(event?.category && event?.category !== "")
+                                                            && <>
+                                                                <h5 className='mt-5'><u>Category</u></h5>
+                                                                <p>{event?.category}</p>
+                                                            </>
+                                                        }
+                                                        {/* about organizer */}
+                                                        {(event?.organizerInfo && event?.organizerInfo !== "")
+                                                            && <>
+                                                                <h5 className='mt-5'><u>About Organizer</u></h5>
+                                                                <p>{event?.organizerInfo}</p>
+                                                            </>
                                                         }
 
-                                                        <small className='ms-2'>{formatNumber(event?.likes?.length)} Likes</small>
-                                                    </button>
-                                                    <button style={{ width: "33%" }} onClick={() => commentRef.current.scrollIntoView({ behavior: 'smooth' })} className='btn btn-light d-flex justify-content-center flex-column flex-sm-row align-items-center'><ChatBubbleTwoToneIcon className='text-primary' fontSize='small' /> <small className='ms-2'>{formatNumber(event?.comments?.length)} Comments</small></button>
-                                                </div><hr />
-                                                {/* title */}
-                                                <div>
-                                                    <h3 className='mt-4 fw-bold'>{event?.title}</h3>
-                                                    <div className='d-flex justify-content-between'>
-                                                        <h6 className='text-warning mt-3 mb-5'><span className="text-dark">Seats Left: </span> {event?.seats - bookedSeats}</h6>
-                                                        <h6 className='text-warning mt-3 mb-5 text-end'><span className="text-dark">Ticket Price: </span> Rs. {event?.ticketPrice}</h6>
+                                                        {/* rules and policies */}
+                                                        {(event?.eventRules && event?.eventRules !== "")
+                                                            && <>
+                                                                <h5 className='mt-5'><u>Rules and Policies</u></h5>
+                                                                <p>{event?.eventRules}</p>
+                                                            </>
+                                                        }
+                                                        {/* address */}
+                                                        {(event?.location && event?.location !== "")
+                                                            && <>
+                                                                <h5 className='mt-5'><u>Address</u></h5>
+                                                                <p>{event?.location}</p>
+                                                            </>
+                                                        }
+                                                        {/* schedule */}
+                                                        {(event?.schedule && event?.schedule?.length > 0)
+                                                            && <>
+                                                                <h5 className='mt-5 mb-4'><u>Schedule</u></h5>
+                                                                <Timeline
+                                                                    items={
+                                                                        event?.schedule?.map((item, i) => (
+                                                                            {
+                                                                                color: '#f5a998',
+                                                                                children: (
+                                                                                    <>
+                                                                                        <b className='text-warning'>{item?.time}</b>
+                                                                                        <p>{item?.details}</p>
+                                                                                    </>
+                                                                                ),
+                                                                            }
+                                                                        ))
+                                                                    }
+                                                                />
+                                                            </>
+                                                        }
+
+                                                        {/* speakers */}
+                                                        {(event?.guests && event?.guests?.length > 0)
+                                                            && <>
+                                                                <h5 className='mt-5 mb-4'><u>Speakers / Guests</u></h5>
+                                                                <Timeline
+                                                                    items={
+                                                                        event?.guests?.map((item, i) => (
+                                                                            {
+                                                                                color: '#9accc9',
+                                                                                children: (
+                                                                                    <>
+                                                                                        <p>
+                                                                                            <Avatar
+                                                                                                size="small"
+                                                                                                src={item?.img}
+                                                                                                icon={<UserOutlined />} />
+                                                                                            <b className='text-info'> {item?.name}</b>
+                                                                                        </p>
+                                                                                        <p><strong>Profession: </strong>{item?.profession}</p>
+                                                                                        <p>{item?.details}</p>
+                                                                                    </>
+                                                                                ),
+                                                                            }
+                                                                        ))
+                                                                    }
+                                                                />
+                                                                <hr />
+                                                            </>
+                                                        }
+
+                                                        {/* description */}
+                                                        {(event?.description && event?.description !== "")
+                                                            && <>
+                                                                <h5 className='mt-5 mb-4'><u>Description</u></h5>
+                                                                <div dangerouslySetInnerHTML={{ __html: event?.description ? event?.description : "No description added yet" }} />
+                                                                <hr />
+                                                            </>
+                                                        }
+                                                        {/* related tags */}
+                                                        {(event?.tags && event?.tags !== "")
+                                                            && <>
+                                                                <h5 className='mt-5 mb-4'><u>Related Tags</u></h5>
+                                                                <div className='mb-4'>{event?.tags?.split(',')?.map((item, i) => {
+                                                                    const trimmedItem = item.trim();
+                                                                    return <button className={`btn btn-outline-secondary me-2 mb-2 ${trimmedItem === '' ? "d-none" : "d-inline"}`} key={i}>{trimmedItem}</button>
+                                                                })}</div><hr />
+                                                            </>
+                                                        }
+
                                                     </div>
-
-                                                    {/* time range */}
-                                                    <div>
-                                                        <h5><u>Time Range</u></h5>
-                                                        <div className="row border rounded border-info text-center p-2 mx-1 mx-sm-3 mt-3">
-                                                            <div className="col" >{event?.time ? event?.time[0] : ""}</div>
-                                                            <div className="col" ><i class='bx bx-right-arrow-alt bx-fade-left fs-4 text-info' ></i></div>
-                                                            <div className="col" >{event?.time ? event?.time[1] : ""}</div>
-                                                        </div>
-                                                    </div>
-                                                    {/* created date */}
-                                                    <>
-                                                        <h5 className='mt-5'><u>Event creation date</u></h5>
-                                                        <p>{moment(event?.createdAt).format('MMM D, YYYY')}</p>
-                                                    </>
-
-                                                    {/* category */}
-                                                    {(event?.category && event?.category !== "")
-                                                        && <>
-                                                            <h5 className='mt-5'><u>Category</u></h5>
-                                                            <p>{event?.category}</p>
-                                                        </>
-                                                    }
-                                                    {/* about organizer */}
-                                                    {(event?.organizerInfo && event?.organizerInfo !== "")
-                                                        && <>
-                                                            <h5 className='mt-5'><u>About Organizer</u></h5>
-                                                            <p>{event?.organizerInfo}</p>
-                                                        </>
-                                                    }
-
-                                                    {/* rules and policies */}
-                                                    {(event?.eventRules && event?.eventRules !== "")
-                                                        && <>
-                                                            <h5 className='mt-5'><u>Rules and Policies</u></h5>
-                                                            <p>{event?.eventRules}</p>
-                                                        </>
-                                                    }
-                                                    {/* address */}
-                                                    {(event?.location && event?.location !== "")
-                                                        && <>
-                                                            <h5 className='mt-5'><u>Address</u></h5>
-                                                            <p>{event?.location}</p>
-                                                        </>
-                                                    }
-                                                    {/* schedule */}
-                                                    {(event?.schedule && event?.schedule?.length > 0)
-                                                        && <>
-                                                            <h5 className='mt-5 mb-4'><u>Schedule</u></h5>
-                                                            <Timeline
-                                                                items={
-                                                                    event?.schedule?.map((item, i) => (
-                                                                        {
-                                                                            color: '#f5a998',
-                                                                            children: (
-                                                                                <>
-                                                                                    <b className='text-warning'>{item?.time}</b>
-                                                                                    <p>{item?.details}</p>
-                                                                                </>
-                                                                            ),
-                                                                        }
-                                                                    ))
-                                                                }
-                                                            />
-                                                        </>
-                                                    }
-
-                                                    {/* speakers */}
-                                                    {(event?.guests && event?.guests?.length > 0)
-                                                        && <>
-                                                            <h5 className='mt-5 mb-4'><u>Speakers / Guests</u></h5>
-                                                            <Timeline
-                                                                items={
-                                                                    event?.guests?.map((item, i) => (
-                                                                        {
-                                                                            color: '#9accc9',
-                                                                            children: (
-                                                                                <>
-                                                                                    <p>
-                                                                                        <Avatar
-                                                                                            size="small"
-                                                                                            src={item?.img}
-                                                                                            icon={<UserOutlined />} />
-                                                                                        <b className='text-info'> {item?.name}</b>
-                                                                                    </p>
-                                                                                    <p><strong>Profession: </strong>{item?.profession}</p>
-                                                                                    <p>{item?.details}</p>
-                                                                                </>
-                                                                            ),
-                                                                        }
-                                                                    ))
-                                                                }
-                                                            />
-                                                            <hr />
-                                                        </>
-                                                    }
-
-                                                    {/* description */}
-                                                    {(event?.description && event?.description !== "")
-                                                        && <>
-                                                            <h5 className='mt-5 mb-4'><u>Description</u></h5>
-                                                            <div dangerouslySetInnerHTML={{ __html: event?.description ? event?.description : "No description added yet" }} />
-                                                            <hr />
-                                                        </>
-                                                    }
-                                                    {/* related tags */}
-                                                    {(event?.tags && event?.tags !== "")
-                                                        && <>
-                                                            <h5 className='mt-5 mb-4'><u>Related Tags</u></h5>
-                                                            <div className='mb-4'>{event?.tags?.split(',')?.map((item, i) => {
-                                                                const trimmedItem = item.trim();
-                                                                return <button className={`btn btn-outline-secondary me-2 mb-2 ${trimmedItem === '' ? "d-none" : "d-inline"}`} key={i}>{trimmedItem}</button>
-                                                            })}</div><hr />
-                                                        </>
-                                                    }
-
-                                                </div>
-                                            </>
+                                                </>
                                 }
 
 

@@ -1,0 +1,107 @@
+import LocationOnTwoToneIcon from '@mui/icons-material/LocationOnTwoTone';
+import LocalPhoneTwoToneIcon from '@mui/icons-material/LocalPhoneTwoTone';
+import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { sendContactMsg } from 'services/feedback';
+import { getLatestBlogs } from 'services/blogs';
+import moment from 'moment';
+import { Pagination, Skeleton } from 'antd';
+
+const initialState = {
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+}
+export default function Contact() {
+    const [blogs, setBlogs] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [count, setCount] = useState(0)
+
+
+    useEffect(() => {
+        getBlogs();
+    }, [page])
+
+    const getBlogs = async () => {
+        try {
+            let { data } = await getLatestBlogs(page);
+            setBlogs(data?.data)
+            setCount(data?.count)
+        } catch (error) {
+            console.log(error);
+            let msg = "Some error occured";
+            let { status, data } = error.response;
+            if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
+                msg = data.message || data.msg;
+                setBlogs([])
+                window.toastify(msg, "error");
+            }
+        } finally {
+            setIsLoading(false)
+        }
+    }
+    return (
+        <>
+            <div className="container my-5" id='blogs-page'>
+                {isLoading
+                    ? <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                        <div className="col">
+                            <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                            <Skeleton active className='mt-3' />
+                        </div>
+                    </div>
+                    :
+                    <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                        {blogs?.map((item, i) => {
+                            return <div className="col" key={i}>
+                                <div class="card rounded-3 overflow-hidden border-0">
+                                    <Link className="card-img" to={`/blog/details/${item?._id}`}>
+                                        <img src={item?.image} class="card-img-top" alt="..." />
+                                    </Link>
+                                    <div class="card-body">
+                                        <p>
+                                            <span><i class='bx bx-calendar text-warning me-1'></i></span>
+                                            <span>{moment(item?.createdAt).format('YYYY-MM-DD')}</span>
+                                        </p>
+                                        <div className='details text-secondary my-2'>
+                                            <span className='pe-2'>{item?.addedBy?.fullName}</span><span>/</span>
+                                            <span className='px-2'>{item?.category}</span><span>/</span>
+                                            <span className='px-2'>{item?.comments?.length} Comments</span>
+                                        </div>
+                                        <h6 class="card-title">{item?.title?.length > 70 ? item?.title?.substring(0, 70) + "..." : item?.title}</h6>
+                                        <div className="text-end">
+                                            <Link to={`/blog/details/${item?._id}`} class="btn btn-link btn-sm text-warning text-decoration-none"><i className='bx bx-chevron-right bx-flashing' ></i> Read More</Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        })}
+                    </div>
+                }
+                {count > 20
+                    && <div className="row mt-5">
+                        <div className="col text-center">
+                            <Pagination className='w-100' pageSize={20} onChange={e => setPage(e)} defaultCurrent={1} total={count} />
+                        </div>
+                    </div>
+                }
+            </div>
+        </>
+    )
+}

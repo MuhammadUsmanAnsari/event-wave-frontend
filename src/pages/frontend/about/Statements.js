@@ -9,7 +9,7 @@ export default function Statements() {
                         <h5 className="text-secondary mb-3">WE ARE EVENTWAVE</h5>
                         <h2><span className="fw-bold">No.1</span> Events Management</h2>
                         <div>
-                            <Link className='button-stylling-1 px-5 mt-4' to="/auth/login">GET STARTED!</Link>
+                            <Link className='button-stylling-1 px-5 mt-4' to="/upcoming">GET STARTED!</Link>
                         </div>
 
                     </div>

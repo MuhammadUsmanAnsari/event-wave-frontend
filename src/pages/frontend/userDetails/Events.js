@@ -33,7 +33,6 @@ export default function Events({ userData }) {
             if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
                 msg = data.message || data.msg;
                 setData([])
-                window.toastify(msg, "error");
             }
         } finally {
             setIsLoading(false)
