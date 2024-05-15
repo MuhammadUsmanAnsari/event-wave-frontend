@@ -3,6 +3,7 @@ import './_blogs.scss';
 import { useEffect, useState } from 'react';
 import { getTopLatestBlogs } from 'services/blogs';
 import moment from 'moment';
+import { Skeleton } from 'antd';
 
 
 export default function Index() {
@@ -33,13 +34,22 @@ export default function Index() {
     return (
         <div className="container my-5" id='blogs-section'>
             {isLoading
-                ? <div className="row">
+                ? <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 ">
                     <div className="col">
-                        <div className='my-5 text-center'>
-                            <div className="spinner-grow spinner-grow-sm bg-info"></div>
-                            <div className="spinner-grow spinner-grow-sm bg-warning mx-3"></div>
-                            <div className="spinner-grow spinner-grow-sm bg-info"></div>
-                        </div>
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
+                    </div>
+                    <div className="col">
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
+                    </div>
+                    <div className="col">
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
+                    </div>
+                    <div className="col">
+                        <Skeleton.Image shape='square' active style={{ height: 200 }} className="w-100" />
+                        <Skeleton active className='mt-3' />
                     </div>
                 </div>
                 : <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">

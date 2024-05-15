@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { getMyUpcomingEvents, getMyPastEvents } from 'services/event';
 import { getMyLikedBlogs, getMyBlogComments } from 'services/blogs';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const eventsTypesTabs = [
     {
@@ -19,6 +21,7 @@ export default function Events() {
     const [selectedTab, setSelectedTab] = useState(1);
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [pDFDownlodLoading, setPDFDownlodLoading] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -111,6 +114,57 @@ export default function Events() {
             setIsLoading(false)
         }
     }
+    const handleDownloadPdf = async (item) => {
+        try {
+            setPDFDownlodLoading({
+                item,
+                loading: true
+            })
+            const container = document.createElement('div');
+            container.style.padding = '50px';
+            container.innerHTML = `
+                <h1 style="text-align:center; font-weight:bold; color:#f5a998;">EventWave</h1>
+                <h1>Event Information</h1>
+                <br/>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Event Title:</strong> ${item?.eventId?.title}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Date:</strong> ${item?.eventId?.date?.split("T")[0]}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Category:</strong> ${item?.eventId?.category}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Country:</strong> ${item?.eventId?.country}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">City:</strong> ${item?.eventId?.city}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Starting Time:</strong> ${item?.eventId?.time[0]}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Ending Time:</strong> ${item?.eventId?.time[1]}</h5>
+                <hr/>
+                <h1>Ticket Information</h1>
+                <br/>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Full Name:</strong> ${item?.fullName}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Email:</strong> ${item?.email}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Phone:</strong> ${item?.phone}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Purchase Date:</strong> ${item?.createdAt?.split("T")[0]}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Seats Booked:</strong> ${item?.quantity}</h5>
+                <h5><strong style="color:#f5a998; margin-bottom:5px;">Price:</strong> Rs. ${item?.totalPrice}</h5>
+                <hr/>
+                <p style="text-align:center;">Thank you for your purchase!</p>
+            `;
+
+            document.body.appendChild(container);
+            const canvas = await html2canvas(container, { scale: 1 }); // Reduce scale for smaller size
+            const imgData = canvas.toDataURL('image/jpeg', 0.9); // Reduce quality further
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('download.pdf');
+
+            document.body.removeChild(container);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+        } finally {
+            setPDFDownlodLoading({})
+        }
+    };
+
 
     return (
         <div className='container-fluid ' id='activities-dashboard-section'>
@@ -144,10 +198,23 @@ export default function Events() {
                                                     <div>
                                                         <button className='btn btn-link p-0 text-decoration-none text-dark fw-bold text-start' onClick={() => navigate(`/event/details/${item?.eventId?._id}`)} >{item?.eventId?.title}</button>
                                                     </div>
-                                                    <div className='mt-3'>
-                                                        <small>
-                                                            You had reserved <strong>{item?.quantity}</strong> {item.quantity === 1 ? "seat" : "seats"} on <strong>{moment(item?.createdAt).format('MMM DD, YYYY')}</strong>
-                                                        </small>
+                                                    <div className='mt-3 d-block d-lg-flex justify-content-between align-items-center'>
+                                                        <div>
+                                                            <small>
+                                                                You had reserved <strong>{item?.quantity}</strong> {item.quantity === 1 ? "seat" : "seats"} on <strong>{moment(item?.createdAt).format('MMM DD, YYYY')}</strong>
+                                                            </small>
+                                                        </div>
+                                                        <div className='my-3 my-lg-0 text-center'>
+                                                            <button className='btn btn-outline-warning px-2 btn-sm text-dark' onClick={() => handleDownloadPdf(item)}>
+                                                                {(pDFDownlodLoading?.item?._id == item?._id && pDFDownlodLoading?.loading)
+                                                                    ? <div>
+                                                                        <div className='spinner-grow spinner-grow-sm'></div>
+                                                                        <div className='spinner-grow spinner-grow-sm mx-2'></div>
+                                                                        <div className='spinner-grow spinner-grow-sm'></div>
+                                                                    </div>
+                                                                    : "Download Ticket"}
+                                                            </button>
+                                                        </div>
                                                     </div>
 
                                                 </div>

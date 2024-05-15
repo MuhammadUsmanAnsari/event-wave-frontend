@@ -39,8 +39,8 @@ export default function Login() {
 
         } catch (error) {
             let msg = "Some error occured";
-            let { status, data } = error.response;
-            if (status == 400 || status == 401 || status == 500 || status == 403) {
+            let { status, data } = error?.response;
+            if (status == 400 || status == 401 || status == 500 || status == 403 || status == 404) {
                 msg = data.message;
                 window.toastify(msg, "error");
                 if (status == 403) {

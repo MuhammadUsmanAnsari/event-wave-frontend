@@ -1,0 +1,93 @@
+$info: #9accc9;
+$warning: #f5a998;
+
+#searchbar-section {
+    .container {
+        .card {
+            z-index: 3;
+            transform: translateY(-73px);
+
+            form {
+                .row {
+                    .col-lg-3 {
+                        .ant-picker {
+                            width: 100%;
+                            border-width: 2px;
+                            height: 50px;
+                            border-color: $warning;
+
+
+                            .ant-picker-suffix {
+                                font-size: 20px;
+                                color: #000;
+
+                            }
+                        }
+
+                        input {
+                            width: 100%;
+                            border-width: 2px;
+                            height: 50px;
+                            border-color: $warning;
+
+                            &::placeholder {
+                                color: #000;
+                            }
+                        }
+
+                        .ant-select {
+                            width: 100%;
+                            height: 50px;
+
+                            .ant-select-selector {
+                                border-width: 2px;
+                                border-color: $warning;
+
+                                .ant-select-selection-placeholder {
+                                    color: #000 !important;
+
+                                }
+                            }
+
+                            .ant-select-arrow {
+                                color: #000;
+                            }
+                        }
+                    }
+
+                    .col-lg-2 {
+                        button {
+                            width: 100%;
+                            height: 50px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    #searchbar-section {
+        .container {
+            .card {
+                border-radius: 80px !important;
+
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 576px) {
+
+    #searchbar-section {
+        .container {
+            .card {
+                margin-top: 20px;
+                border-radius: 20px !important;
+                transform: translateY(0px);
+            }
+        }
+    }
+
+}

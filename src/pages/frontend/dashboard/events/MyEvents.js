@@ -9,7 +9,8 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { useNavigate } from 'react-router-dom';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import ViewEvent from './ViewEvent';
-
+import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
+import AttendeesModel from './AttendeesModel';
 
 export default function MyEvents() {
     const [events, setEvents] = useState([]);
@@ -18,7 +19,7 @@ export default function MyEvents() {
     const [isLoading, setIsLoading] = useState(false);
     const [statusLoading, setStatusLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const [openCancelModal, setOpenCancelModal] = useState(false);
+    const [openAttendeeModal, setOpenAttendeeModal] = useState(false);
     const [modalEventId, setModalEventId] = useState("");
     const searchInput = useRef(null);
     const navigate = useNavigate();
@@ -203,16 +204,30 @@ export default function MyEvents() {
         {
             title: 'Actions',
             key: 'actions',
+            align: "center",
             render: (_, record) => (
                 <div className='d-flex justify-content-evenly align-items-center'>
-                    <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
-                    <Button type='dashed' onClick={() => {
-                        setOpenModal(true)
-                        setModalEventId(record?._id)
-                    }}
-                        className='ms-1 d-flex align-items-center justify-content-center'>
-                        <VisibilityTwoToneIcon fontSize='small' />
-                    </Button>
+                    <Tooltip title="Change Status">
+                        <Switch className='ms-1' unCheckedChildren={record.status !== "Published" && record.status} id='status' disabled={record.status === "Closed" ? true : false} loading={statusLoading} checkedChildren="Active" size='small' checked={record.status === "Published" ? true : false} onChange={() => handleStatus(record)} />
+                    </Tooltip>
+                    <Tooltip title="Attendees">
+                        <Button type='dashed' onClick={() => {
+                            setOpenAttendeeModal(true)
+                            setModalEventId(record?._id)
+                        }}
+                            className='ms-1 d-flex align-items-center justify-content-center'>
+                            <PeopleAltTwoToneIcon fontSize='small' />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="View Event">
+                        <Button type='dashed' onClick={() => {
+                            setOpenModal(true)
+                            setModalEventId(record?._id)
+                        }}
+                            className='ms-1 d-flex align-items-center justify-content-center'>
+                            <VisibilityTwoToneIcon fontSize='small' />
+                        </Button>
+                    </Tooltip>
                     <Button type='default' disabled={
                         record.status === "Closed"
                             ? true : false
@@ -316,9 +331,10 @@ export default function MyEvents() {
             <div className="row">
                 <div className="col">
                     {openModal && <ViewEvent open={openModal} setOpen={setOpenModal} id={modalEventId} />}
+                    {openAttendeeModal && <AttendeesModel open={openAttendeeModal} setOpen={setOpenAttendeeModal} id={modalEventId} />}
                 </div>
             </div>
-        
+
         </div>
     )
 }

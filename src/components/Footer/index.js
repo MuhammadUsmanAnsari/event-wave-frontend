@@ -117,8 +117,8 @@ export default function Index() {
                             <h4 className='mb-3 fw-bold text-warning'>Recent Blogs</h4>
                             {
                                 blogs?.map((item, i) => {
-                                    return <>
-                                        <Link to={`/blog/details/${item?._id}`} className="row text-decoration-none text-light g-0" key={i}>
+                                    return <div key={i}>
+                                        <Link to={`/blog/details/${item?._id}`} className="row text-decoration-none text-light g-0" >
                                             <div className="col-3">
                                                 <img src={item?.image} style={{ width: 50, height: 50 }} alt="..." />
                                             </div>
@@ -131,7 +131,7 @@ export default function Index() {
                                             </div>
                                         </Link><hr />
 
-                                    </>
+                                    </div>
                                 })
                             }
                         </div>

@@ -54,6 +54,12 @@ export const getMyPastEvents = () => {
 export const getOrganizerEventsUsingCategory = (category, organizerId) => {
     return get(`${root}/api/v1/event/organizer-events-using-category?category=${category}&organizerId=${organizerId}`);
 };
+export const searchEvents = (page, body) => {
+    return get(`${root}/api/v1/event/search?country=${body?.country}&category=${body?.category}&date=${body?.date}&page=${page}&limit=20`, body);
+};
+export const viewAttendeesOfEvent = (eventId) => {
+    return get(`${root}/api/v1/event/view-attendees-of-event?eventId=${eventId}`);
+};
 
 
 // admin

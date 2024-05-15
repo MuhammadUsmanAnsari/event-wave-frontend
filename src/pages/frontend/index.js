@@ -11,6 +11,7 @@ import EventsWithCategory from 'pages/frontend/eventsUsingCategory'
 import Gallery from 'pages/frontend/gallery'
 import Contact from 'pages/frontend/contact'
 import Blogs from 'pages/frontend/blogs'
+import SearchEvents from 'pages/frontend/searchEvents'
 
 export default function index() {
   return (
@@ -23,6 +24,7 @@ export default function index() {
         <Route path='contact' element={<Contact />} />
         <Route path='blogs' element={<PrivateRoute Component={Blogs} />} />
         <Route path='events/:category' element={<PrivateRoute Component={EventsWithCategory} />} />
+        <Route path='search/:country/:date/:category' element={<PrivateRoute Component={SearchEvents} />} />
         <Route path='speaker/:name' element={<PrivateRoute Component={SpeakersEvents} />} />
         <Route path='user/:id/*' element={<PrivateRoute Component={UserProfile} />} />
         <Route path='event/details/:id' element={<PrivateRoute Component={EventDetails} />} />
