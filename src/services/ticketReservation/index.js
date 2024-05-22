@@ -8,3 +8,6 @@ export const addTicketReservation = (id, body) => {
 export const myBookedSeats = (id) => {
     return get(`${root}/api/v1/booking/mySeats?id=${id}`);
 };
+export const makePayment = (body) => {
+    return post(`${root}/api/v1/booking/make-payment`, body);
+};

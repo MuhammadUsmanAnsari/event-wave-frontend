@@ -6,8 +6,9 @@ import { Avatar, Input, InputNumber } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import LoadingIndicator from 'components/LoadingIndicator';
-import { addTicketReservation, myBookedSeats } from 'services/ticketReservation';
+import { addTicketReservation, myBookedSeats, makePayment } from 'services/ticketReservation';
 import moment from 'moment';
+import StripeCheckout from 'react-stripe-checkout';
 
 export default function RightCol({ event, getEventData }) {
     const [fullName, setFullName] = useState("")
@@ -54,8 +55,7 @@ export default function RightCol({ event, getEventData }) {
         return num.toString();
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (transactionId) => {
         var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
         if (!email.match(validRegex)) {
@@ -66,10 +66,9 @@ export default function RightCol({ event, getEventData }) {
         }
 
         let body = {
-            fullName, email, phone, quantity, totalPrice
+            fullName, email, phone, quantity, totalPrice, transactionId
         }
 
-        setLoading(true)
         try {
             let { data } = await addTicketReservation(event?._id, body);
             window.toastify(data?.msg, "success");
@@ -93,6 +92,24 @@ export default function RightCol({ event, getEventData }) {
         }
     }
 
+    const onToken = async (token) => {
+        //understand the info within the token
+        setLoading(true)
+
+        try {
+            let body = {
+                token, amount: Math.abs(totalPrice)
+            }
+            let { data } = await makePayment(body);
+            handleSubmit(data.data.transactionId)
+        } catch (error) {
+            setLoading(false)
+            window.toastify(error.message, "error");
+        }
+    };
+
+
+
 
     const handleQuantity = e => {
         setQuantity(e);
@@ -113,13 +130,13 @@ export default function RightCol({ event, getEventData }) {
                         </div>
                     </div>
                     <div className="container mt-4">
-                        <form onSubmit={handleSubmit}>
+                        <form >
                             <div className="row row-cols-1 px-2 px-sm-3 px-md-1 px-lg-3 g-3">
                                 <div className="col">
                                     <Input size='large' required value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Enter Full Name" />
                                 </div>
                                 <div className="col">
-                                    <Input size='large' required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter Email" />
+                                    <Input type='email' size='large' required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter Email" />
                                 </div>
                                 <div className="col">
                                     <InputNumber size='large' required value={phone} onChange={e => setPhone(e)} className='w-100' placeholder="Enter Phone" />
@@ -142,15 +159,31 @@ export default function RightCol({ event, getEventData }) {
                                             </button>
                                         </div>
                                         : <div className="col">
-                                            <button class="button-stylling w-100 py-3 rounded bg-info border-0" disabled={loading} type='submit' role="button">
-                                                {loading
-                                                    ? <div className='spinner-border spinner-border-sm'></div>
-                                                    : <>
-                                                        <span class="text">Submit Now</span>
-                                                        <span>Book Ticket</span>
-                                                    </>
-                                                }
-                                            </button>
+                                            <StripeCheckout
+                                                billingAddress
+                                                token={onToken}
+                                                amount={Math.abs(totalPrice * 100)}
+                                                currency="GBP"
+                                                stripeKey={"pk_test_51PJCaPRpzFB7QfCkyhUpsB4Svbf22YCMgi2Z7w1L4aCOV74HIX0jhMuFjTJCNmhbHnO130vtavNOX5dkh41M8Ya5000xZU0lps"}
+                                            >
+                                                <button
+                                                    className={`button-stylling w-100 py-3 rounded bg-info border-0`}
+                                                    type='button'
+                                                    disabled={
+                                                        ((!fullName || fullName == "") || (!email || email == "") || (!phone || phone == "") || (!totalPrice || totalPrice <= 0) || loading)
+                                                            ? true
+                                                            : false
+                                                    }
+                                                >
+                                                    {loading
+                                                        ? <div className='spinner-border spinner-border-sm'></div>
+                                                        : <>
+                                                            <span class="text">Submit Now</span>
+                                                            <span>Book Ticket</span>
+                                                        </>
+                                                    }
+                                                </button>
+                                            </StripeCheckout>
                                         </div>
                                 }
                             </div>
