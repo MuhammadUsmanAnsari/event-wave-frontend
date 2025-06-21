@@ -24,9 +24,9 @@ export default function Index({ collapsed, setCollapsed }) {
                             }
                         </button>
                     </li>
-                    <li class="nav-item me-3">
+                    {/* <li class="nav-item me-3">
                         <a class="nav-link text-secondary"><NotificationsNoneOutlinedIcon /></a>
-                    </li>
+                    </li> */}
                     <li className='me-0 me-sm-2 me-md-0 '>
                         {isAuthenticated
                             ? <Popover placement="bottomRight" title={text} content={<ProfileMenu />} >

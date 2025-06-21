@@ -14,14 +14,14 @@ const activityLogTabs = [
         title: "Event Comments",
         id: 2
     },
-    {
-        title: "Liked Blogs",
-        id: 3
-    },
-    {
-        title: "Blog Comments",
-        id: 4
-    },
+    // {
+    //     title: "Liked Blogs",
+    //     id: 3
+    // },
+    // {
+    //     title: "Blog Comments",
+    //     id: 4
+    // },
 ]
 export default function Activities() {
     const [selectedTab, setSelectedTab] = useState(1);
@@ -36,12 +36,12 @@ export default function Activities() {
         if (selectedTab === 2) {
             eventComments()
         }
-        if (selectedTab === 3) {
-            likedBlogs()
-        }
-        if (selectedTab === 4) {
-            blogComments()
-        }
+        // if (selectedTab === 3) {
+        //     likedBlogs()
+        // }
+        // if (selectedTab === 4) {
+        //     blogComments()
+        // }
     }, [selectedTab])
 
     const likedEvents = async () => {
@@ -56,7 +56,9 @@ export default function Activities() {
             if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
                 msg = data.message || data.msg;
                 setData([])
-                window.toastify(msg, "error");
+                if (!msg?.includes("No events found")) {
+                    window.toastify(msg, "error");
+                }
             }
         } finally {
             setIsLoading(false)
@@ -75,7 +77,9 @@ export default function Activities() {
             if (status == 400 || status == 401 || status == 500 || status == 413 || status == 404) {
                 msg = data.message || data.msg;
                 setData([])
-                window.toastify(msg, "error");
+                if (!msg?.includes("No events found")) {
+                    window.toastify(msg, "error");
+                }
             }
         } finally {
             setIsLoading(false)

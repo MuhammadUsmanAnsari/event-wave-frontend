@@ -8,8 +8,6 @@ import LoadingIndicator from 'components/LoadingIndicator';
 import ReactQuill from 'react-quill';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { storage } from 'config/Firebase';
 
 const { Dragger } = Upload;
 
@@ -58,93 +56,12 @@ export default function EditEvent() {
     }
 
 
-    const props = {
-        name: 'file',
-        multiple: false,
-        fileList: [],
-        customRequest: async ({ file, onSuccess, onError }) => {
-            let results = window.verifyImageSize(file);
-            if (results) {
-                const img = new Image();
-                img.src = URL.createObjectURL(file);
-                img.onload = () => {
-                    const width = img.width;
-                    const height = img.height;
-                    if (width === max_image_width && height === max_image_height) {
-                        if (event?.image?.includes("https://firebasestorage.googleapis.com")) {
-                            const fileRef = ref(storage, event?.image);
-                            deleteObject(fileRef).then(async () => {
-                                const fileExt = file.name.split('.').pop();
-                                const imagesRef = ref(storage, `events/${window.getRandomId()}.${fileExt}`)
-                                const uploadTask = uploadBytesResumable(imagesRef, file);
-
-                                setImgLoading(true)
-                                uploadTask.on('state_changed',
-                                    (snapshot) => {
-                                        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                                        setImgProgress(progress)
-                                    },
-                                    (error) => {
-                                        window.toastify(error.message, "error")
-                                        setImgLoading(false)
-                                    },
-                                    () => {
-                                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                            setImage(downloadURL);
-                                            setImgLoading(false)
-                                        });
-                                    }
-                                );
-                            })
-
-                        } else {
-                            const fileExt = file.name.split('.').pop();
-                            const imagesRef = ref(storage, `events/${window.getRandomId()}.${fileExt}`)
-                            const uploadTask = uploadBytesResumable(imagesRef, file);
-
-                            setImgLoading(true)
-                            uploadTask.on('state_changed',
-                                (snapshot) => {
-                                    const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                                    setImgProgress(progress)
-                                },
-                                (error) => {
-                                    window.toastify(error.message, "error")
-                                    setImgLoading(false)
-                                },
-                                () => {
-                                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                        setImage(downloadURL);
-                                        setImgLoading(false)
-                                    });
-                                }
-                            );
-                        }
-
-                    } else {
-                        return window.toastify(`Image dimenstions should be ${max_image_width}x${max_image_height} px. Your image resolution is ${width}x${height} px`, "error")
-                    }
-                }
-
-
-
-            }
-        },
-        onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files);
-        },
-    };
-
-
     const filterOption = (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
 
 
     const onFinish = async (values) => {
-        if (image === "") {
-            return window.toastify("Image is required.", "error");
-        }
         const formattedDate = moment(values?.date?.$d).format('YYYY-MM-DD');
         const formattedDated = values?.time?.map(item => moment(item.$d).format('HH:mm'));
         const ticketPrice = Math.floor(Number(values?.ticketPrice) * (1 + taxRate));
@@ -156,7 +73,7 @@ export default function EditEvent() {
         ))
         let body = {
             ...values, date: formattedDate, time: formattedDated, description,
-            ticketPrice, schedule: formattedSchedule, image
+            ticketPrice, schedule: formattedSchedule,
         };
         setLoading(true)
         try {
@@ -248,34 +165,6 @@ export default function EditEvent() {
                             ref={eventFormRef}
                         >
                             <div className="row g-3">
-                                <div className="col-12 mb-5">
-                                    {imgLoading
-                                        ? <div className='my-3 text-center'>
-                                            <Progress type="circle" percent={imgProgress} />
-                                        </div>
-                                        : <>
-                                            {image === ""
-                                                ? <Dragger {...props} >
-                                                    <p className="ant-upload-drag-icon">
-                                                        <InboxOutlined />
-                                                    </p>
-                                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                                    <p className="ant-upload-hint">
-                                                        The maximum image size allowed is 2MB and image dimensions shoule be {max_image_width} x {max_image_height} pixels.
-                                                    </p>
-                                                </Dragger>
-                                                : <div className="text-center">
-                                                    <img src={image} alt='Event Picture' className='img-fluid' />
-                                                    <Dragger {...props} style={{ width: "fit-content", background: "#9accc9", margin: "10px auto" }}>
-                                                        Change Picture
-                                                    </Dragger>
-                                                </div>
-                                            }
-                                        </>
-                                    }
-
-
-                                </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Title" name="title" rules={[{ required: true }, {
                                         max: 100,
@@ -339,10 +228,11 @@ export default function EditEvent() {
                                 </div>
                                 <div className="col-12 col-md-6">
                                     <Form.Item label="Select Date" name="date" rules={[{ required: true }]}>
-                                        <DatePicker className='w-100' placeholder='Select Date' size='large' disabledDate={(current) => {
-                                            // Disable past dates
-                                            return current && current < moment().startOf("day");
-                                        }} format='YYYY-MM-DD' id='date' />
+                                        <DatePicker className='w-100' placeholder='Select Date' size='large'
+                                            disabledDate={(current) => {
+                                                return current && current <= moment().endOf("day");
+                                            }}
+                                            format='YYYY-MM-DD' id='date' />
                                     </Form.Item>
                                 </div>
                                 <div className="col-12 col-md-6">

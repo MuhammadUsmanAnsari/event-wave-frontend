@@ -8,8 +8,6 @@ import ChangePassword from './ChangePassword';
 import { getUser, updateUser, uploadImage } from 'services/auth';
 import LoadingIndicator from 'components/LoadingIndicator';
 import { useAuthContext } from 'context/AuthContext';
-import { storage } from 'config/Firebase';
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import ChangeUserRole from './ChangeUserRole';
 
 const initialLinks = {
@@ -26,8 +24,6 @@ export default function EditProfile() {
     const [current, setCurrent] = useState("1");
     const [links, setLinks] = useState(initialLinks);
     const [loading, setLoading] = useState(false);
-    const [imgLoading, setImgLoading] = useState(false);
-    const [imgProgress, setImgProgress] = useState(0);
     const { toggle, setToggle, user } = useAuthContext();
 
 
@@ -105,82 +101,6 @@ export default function EditProfile() {
 
     }
 
-    const handleImageChange = async (e) => {
-        const image = e.target.files[0];
-        let results = window.verifyImageSize(image)
-        if (results) {
-            if (user?.image?.includes("https://firebasestorage.googleapis.com")) {
-                const fileRef = ref(storage, user?.image);
-                deleteObject(fileRef).then(async () => {
-                    const fileExt = image.name.split('.').pop();
-                    const imagesRef = ref(storage, `users/${window.getRandomId()}.${fileExt}`)
-                    const uploadTask = uploadBytesResumable(imagesRef, image);
-
-                    setImgLoading(true)
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
-                            setImgProgress(progress)
-                        },
-                        (error) => {
-                            window.toastify(error.message, "error")
-                            setImgLoading(false)
-                        },
-                        () => {
-                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                uploadProfileImg(downloadURL);
-                                setImgLoading(false)
-                            });
-                        }
-                    );
-                })
-            } else {
-                const fileExt = image.name.split('.').pop();
-                const imagesRef = ref(storage, `users/${window.getRandomId()}.${fileExt}`)
-                const uploadTask = uploadBytesResumable(imagesRef, image);
-
-                setImgLoading(true)
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
-                        setImgProgress(progress)
-                    },
-                    (error) => {
-                        window.toastify(error.message, "error")
-                        setImgLoading(false)
-                    },
-                    () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            uploadProfileImg(downloadURL);
-                            setImgLoading(false)
-                        });
-                    }
-                );
-            }
-        }
-    }
-
-    const uploadProfileImg = async (image) => {
-        try {
-            let { data } = await updateUser(user?._id, { image });
-
-            // let { data } = await uploadImage({ id: userData?._id, image: reader.result });
-            window.toastify(data.msg, "success");
-            setToggle(!toggle)
-        } catch (error) {
-            let msg = "Some error occured";
-            let { status, data } = error.response;
-            if (status == 400 || status == 401 || status == 500 || status == 413) {
-                msg = data.message || data.msg;
-                window.toastify(msg, "error");
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const items = [
         {
             label: 'Personal Details',
@@ -218,7 +138,7 @@ export default function EditProfile() {
                     <div className="row gx-4">
                         <div className="col-12 col-lg-3">
                             <div className="card rounded-1 p-3 py-4 border-0 shadow d-flex align-items-center justify-content-center">
-                                <div id="profileImage">
+                                {/* <div id="profileImage">
                                     {imgLoading
                                         ? <div className='text-center'>
                                             <Progress type="circle" percent={imgProgress} />
@@ -240,7 +160,7 @@ export default function EditProfile() {
                                         <CameraAltOutlinedIcon fontSize='small' />
                                     </label>
                                 </div>
-                                <input type="file" class="form-control d-none" id="inputGroupFile01" name='image' accept="image/png, image/jpeg" onChange={handleImageChange} />
+                                <input type="file" class="form-control d-none" id="inputGroupFile01" name='image' accept="image/png, image/jpeg" onChange={handleImageChange} /> */}
                                 <h6 className='mt-4'>{user?.fullName}</h6>
                                 <p className='text-secondary'>{user?.profession}</p>
                             </div>

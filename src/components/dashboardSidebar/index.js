@@ -44,23 +44,23 @@ export default function Index({ collapsed }) {
                 }
             ]
         },
-        {
-            icon: <BookOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
-            label: "Blogs",
-            key: "/dashboard/blogs",
-            children: [
-                {
-                    icon: <AddOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
-                    label: "Add Blog",
-                    key: "/dashboard/blogs/add"
-                },
-                {
-                    icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
-                    label: "My Blogs",
-                    key: "/dashboard/blogs/myBlogs"
-                }
-            ]
-        },
+        // {
+        //     icon: <BookOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+        //     label: "Blogs",
+        //     key: "/dashboard/blogs",
+        //     children: [
+        //         {
+        //             icon: <AddOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+        //             label: "Add Blog",
+        //             key: "/dashboard/blogs/add"
+        //         },
+        //         {
+        //             icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+        //             label: "My Blogs",
+        //             key: "/dashboard/blogs/myBlogs"
+        //         }
+        //     ]
+        // },
     ];
 
     const menuItemsAttandee = [
@@ -87,23 +87,23 @@ export default function Index({ collapsed }) {
             label: "Added Events",
             key: "/dashboard/admin/events"
         },
-        {
-            icon: <BookOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
-            label: "Blogs",
-            key: "/dashboard/blogs",
-            children: [
-                {
-                    icon: <AddOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
-                    label: "Add Blog",
-                    key: "/dashboard/blogs/add"
-                },
-                {
-                    icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
-                    label: "My Blogs",
-                    key: "/dashboard/blogs/myBlogs"
-                }
-            ]
-        },
+        // {
+        //     icon: <BookOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+        //     label: "Blogs",
+        //     key: "/dashboard/blogs",
+        //     children: [
+        //         {
+        //             icon: <AddOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+        //             label: "Add Blog",
+        //             key: "/dashboard/blogs/add"
+        //         },
+        //         {
+        //             icon: <ListAltOutlinedIcon className={collapsed ? 'fs-5' : 'fs-4'} />,
+        //             label: "My Blogs",
+        //             key: "/dashboard/blogs/myBlogs"
+        //         }
+        //     ]
+        // },
     ];
 
     const items =

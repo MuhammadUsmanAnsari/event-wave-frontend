@@ -24,17 +24,17 @@ export default function Index() {
             <Services />
             <PopularEvents />
             <HappyCustomers />
-            <Speakers />
+            {/* <Speakers /> */}
             <Testimonial />
-            <div className="container">
+            {/* <div className="container">
                 <div className="row">
                     <div className="col">
                         <h5 className='text-center text-warning'>Blog</h5>
                         <h2 className='heading-stylling display-5'>LATEST BLOGS</h2>
                     </div>
                 </div>
-            </div>
-            <Blogs />
+            </div> */}
+            {/* <Blogs /> */}
             <Newsletter />
             <Footer />
 

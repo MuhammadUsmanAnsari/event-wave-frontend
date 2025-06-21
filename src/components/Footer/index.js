@@ -16,9 +16,9 @@ export default function Index() {
     const [isLoading, setIsLoading] = useState(true)
 
 
-    useEffect(() => {
-        getBlogs();
-    }, [])
+    // useEffect(() => {
+    //     getBlogs();
+    // }, [])
 
     const getBlogs = async () => {
         try {
@@ -47,7 +47,7 @@ export default function Index() {
                             <Link to="/" className='event-wave-logo text-light'>EventWave</Link>
                         </div>
                     </div>
-                    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4  pb-3">
+                    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3  pb-3">
                         <div className="col">
                             <p>Discover unforgettable experiences, book your tickets, and create memories at our diverse events lineup!</p>
                             <hr />
@@ -94,7 +94,7 @@ export default function Index() {
                                     Events
                                 </Link>
                             </div>
-                            <div>
+                            {/* <div>
                                 <Link to={'/gallery'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
                                     Gallery
@@ -105,7 +105,7 @@ export default function Index() {
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
                                     Blogs
                                 </Link>
-                            </div>
+                            </div> */}
                             <div>
                                 <Link to={'/contact'}>
                                     <i className='bx bx-chevron-right bx-flashing' ></i>
@@ -113,7 +113,7 @@ export default function Index() {
                                 </Link>
                             </div>
                         </div>
-                        <div className="col mt-5 mt-md-4 mt-lg-0">
+                        {/* <div className="col mt-5 mt-md-4 mt-lg-0">
                             <h4 className='mb-3 fw-bold text-warning'>Recent Blogs</h4>
                             {
                                 blogs?.map((item, i) => {
@@ -134,7 +134,7 @@ export default function Index() {
                                     </div>
                                 })
                             }
-                        </div>
+                        </div> */}
                         <div className="col mt-5 mt-md-4 mt-lg-0">
                             <h4 className='mb-3 fw-bold text-warning'>Contact</h4>
                             <div className="row">
@@ -142,7 +142,7 @@ export default function Index() {
                                     <LocationOnTwoToneIcon />
                                 </div>
                                 <div className="col-10">
-                                    <Link to="https://maps.app.goo.gl/TUBrjAABQX47Poj88">2107-D Ghulamabad Faisalabad Pakistan</Link>
+                                    <Link to="https://maps.app.goo.gl/gCf1rpnhbJ6vbm1p8">Faisalabad Pakistan</Link>
                                 </div>
                             </div>
                             <div className="row my-2">
@@ -150,7 +150,7 @@ export default function Index() {
                                     <LocalPhoneTwoToneIcon />
                                 </div>
                                 <div className="col-10">
-                                    <Link to="tel:+923007588836">+923007588836</Link>
+                                    <Link to="tel:+923229788949">+923229788949</Link>
                                 </div>
                             </div>
                             <div className="row ">
@@ -158,7 +158,7 @@ export default function Index() {
                                     <EmailTwoToneIcon />
                                 </div>
                                 <div className="col-10">
-                                    <Link to="mailto:usmanarif2913@gmail.com">usmanarif2913@gmail.com</Link>
+                                    <Link to="mailto:wahaabjaviad.weorg@gmail.com">wahaabjaviad.weorg@gmail.com</Link>
                                 </div>
                             </div>
                         </div>

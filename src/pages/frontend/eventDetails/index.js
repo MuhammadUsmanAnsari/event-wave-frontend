@@ -154,13 +154,7 @@ export default function Index() {
                                                 </div>
                                                 :
                                                 <>
-                                                    <div>
-                                                        <img
-                                                            className='img-fluid rounded'
-                                                            width={'100%'}
-                                                            src={event?.image}
-                                                        />
-                                                    </div>
+                                                    <h3 className='mt-4 fw-bold'>{event?.title}</h3>
                                                     <div className="d-flex justify-content-between align-items-center my-4">
                                                         <div style={{ width: "50%" }}>
                                                             <i class='bx bx-calendar text-warning me-1'></i> <small>{moment(event?.date).format('MMM D, YYYY')}</small>
@@ -189,7 +183,6 @@ export default function Index() {
                                                     </div><hr />
                                                     {/* title */}
                                                     <div>
-                                                        <h3 className='mt-4 fw-bold'>{event?.title}</h3>
                                                         <div className='d-flex justify-content-between'>
                                                             <h6 className='text-warning mt-3 mb-5'><span className="text-dark">Seats Left: </span> {event?.seats - bookedSeats}</h6>
                                                             <h6 className='text-warning mt-3 mb-5 text-end'><span className="text-dark">Ticket Price: </span> Rs. {event?.ticketPrice}</h6>

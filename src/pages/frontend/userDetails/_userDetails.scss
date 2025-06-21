@@ -119,10 +119,21 @@ $warning: #f5a998;
                             a {
                                 color: #000;
                                 text-decoration: none;
+                                font-weight: bolder;
+
 
                                 &:hover {
                                     color: $info;
                                 }
+                            }
+                        }
+                        a {
+                            color: #000;
+                            text-decoration: none;
+
+
+                            &:hover {
+                                color: $info;
                             }
                         }
                     }

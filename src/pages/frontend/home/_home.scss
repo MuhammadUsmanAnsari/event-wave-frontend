@@ -267,7 +267,7 @@ $warning: #f5a998;
                     position: relative;
 
                     img {
-                        transition: all 0.4s ease;
+                        // transition: all 0.4s ease;
                         height: 100%;
                     }
 
@@ -278,7 +278,7 @@ $warning: #f5a998;
                         font-weight: bold;
                         font-size: large;
                         // opacity: 0;
-                        transform: translateY(90px);
+                        // transform: translateY(90px);
                         z-index: 2;
                         transition: all 0.3s ease;
 
@@ -291,12 +291,21 @@ $warning: #f5a998;
                         a {
                             color: #000;
                             text-decoration: none;
+                            font-weight: bolder;
 
                             &:hover {
                                 color: $info;
                             }
                         }
                     }
+                        a {
+                            color: #000;
+                            text-decoration: none;
+
+                            &:hover {
+                                color: $info;
+                            }
+                        }
                 }
 
                 &:hover {

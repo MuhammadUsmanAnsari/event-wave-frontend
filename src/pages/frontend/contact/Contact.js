@@ -54,7 +54,7 @@ export default function Contact() {
                             </div>
                             <div className="col-11 ps-4">
                                 <h3 className='fw-bold text-warning'>LOCATION</h3>
-                                <Link to="https://maps.app.goo.gl/TUBrjAABQX47Poj88">2107-D Ghulamabad Faisalabad Pakistan</Link>
+                                <Link to="https://maps.app.goo.gl/gCf1rpnhbJ6vbm1p8">1479-D Block shahi Chowk</Link>
                             </div>
                         </div>
                         <div className='row p-4 rounded-3 shadow mt-4'>
@@ -63,7 +63,7 @@ export default function Contact() {
                             </div>
                             <div className="col-11 ps-4">
                                 <h3 className='fw-bold text-warning'>PHONE</h3>
-                                <Link to="tel:+923007588836">+923007588836</Link>
+                                <Link to="tel:+923229788949">+923229788949</Link>
                             </div>
                         </div>
                         <div className='row p-4 rounded-3 shadow mt-4'>
@@ -73,7 +73,7 @@ export default function Contact() {
                             <div className="col-11 ps-4">
                                 <h3 className='fw-bold text-warning'>EMAIL</h3>
                                 <div>
-                                    <Link to="mailto:usmanarif2913@gmail.com">usmanarif2913@gmail.com</Link>
+                                    <Link to="mailto:wahaabjaviad.weorg@gmail.com">wahaabjaviad.weorg@gmail.com</Link>
                                 </div>
                                 <div>
                                     <Link to="mailto:maanansari2913@gmail.com">maanansari2913@gmail.com</Link>

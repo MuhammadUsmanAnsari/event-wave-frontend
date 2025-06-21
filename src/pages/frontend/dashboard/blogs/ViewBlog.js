@@ -57,11 +57,11 @@ export default function ViewBlog({ open, setOpen, id }) {
                         </div>
                         :
                         <>
-                            <div className="row mt-5">
+                            {/* <div className="row mt-5">
                                 <div className="col">
                                     <img src={blog?.image} alt="event image" className='w-100 img-fluid rounded-3' />
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="row mt-3">
                                 <div className="col-12 mb-4">
                                     <div className='d-block d-sm-flex justify-content-between'>

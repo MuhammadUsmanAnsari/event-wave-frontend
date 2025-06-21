@@ -34,12 +34,12 @@ export default function ProfileMenu() {
                 <span><CelebrationOutlinedIcon fontSize='small' /></span>
                 <span>Added Events</span>
             </button>}
-            {(user?.role === "admin" || user?.role === "organizer") &&
+            {/* {(user?.role === "admin" || user?.role === "organizer") &&
                 <button className='btn btn-light' onClick={() => navigate("/dashboard/blogs/myBlogs")}>
                     <span><BookOutlinedIcon fontSize='small' /></span>
                     <span>My Blogs</span>
                 </button>
-            }
+            } */}
             <hr />
             <button className='btn btn-light w-100' onClick={handleLogout}>
                 <span><LogoutIcon fontSize='small' /></span>

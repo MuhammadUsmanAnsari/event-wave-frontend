@@ -56,12 +56,7 @@ export default function ViewEvent({ open, setOpen, id }) {
                             </div>
                         </div>
                         :
-                        <>
-                            <div className="row mt-5">
-                                <div className="col">
-                                    <img src={event?.image} alt="event image" className='w-100 img-fluid rounded-3' />
-                                </div>
-                            </div>
+                        <>                          
                             <div className="row mt-3">
                                 <div className="col-12 mb-4">
                                     <h4>{event?.title}</h4>

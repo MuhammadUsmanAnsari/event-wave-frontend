@@ -38,25 +38,25 @@ $warning: #f5a998;
                 }
             }
 
+            // .col:nth-child(3) {
+            //     max-height: 300px;
+            //     overflow-y: auto;
+
+            //     &::-webkit-scrollbar {
+            //         width: 2px;
+            //     }
+
+            //     &::-webkit-scrollbar-track {
+            //         background: transparent;
+            //     }
+
+            //     /* Handle */
+            //     &::-webkit-scrollbar-thumb {
+            //         background: $info;
+            //     }
+            // }
+
             .col:nth-child(3) {
-                max-height: 300px;
-                overflow-y: auto;
-
-                &::-webkit-scrollbar {
-                    width: 2px;
-                }
-
-                &::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-
-                /* Handle */
-                &::-webkit-scrollbar-thumb {
-                    background: $info;
-                }
-            }
-
-            .col:nth-child(4) {
                 .row {
                     .col-10 {
                         a {
